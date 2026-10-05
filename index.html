@@ -22,10 +22,10 @@
     <a class="brand" href="index.html" aria-label="Home"><span class="brand-mark" aria-hidden="true">э</span><span data-i18n="brand">Это сложнее</span></a>
     <nav class="desktop-nav" data-i18n-aria="primaryNav" aria-label="Основная навигация">
       <a class="active" aria-current="page" href="index.html" data-i18n="navHome">Главная</a>
-      <a href="learn.html">Учиться</a>
+      <a href="learn.html" data-i18n="navLearn">Учиться</a>
       <a href="library.html" data-i18n="navLibrary">Библиотека</a>
       <a href="games.html" data-i18n="navGames">Игры</a>
-      <a href="progress.html">Прогресс</a>
+      <a href="progress.html" data-i18n="navProgress">Прогресс</a>
     </nav>
     <div class="header-actions">
       <label class="language-picker"><span class="sr-only" data-i18n="language">Язык</span><select id="languageSelect" aria-label="Language"><option value="ru">RU</option><option value="et">ET</option><option value="en">EN</option></select></label>
@@ -34,7 +34,7 @@
     </div>
   </header>
   <nav class="mobile-menu" id="mobileMenu" data-i18n-aria="mobileNav" aria-label="Мобильное меню" hidden>
-    <a aria-current="page" href="index.html" data-i18n="navHome">Главная</a><a href="learn.html">Учиться</a><a href="daily.html">Сегодня</a><a href="map.html">Карта знаний</a><a href="simulator.html">Симулятор</a><a href="progress.html">Прогресс</a><a href="library.html" data-i18n="navLibrary">Библиотека</a><a href="games.html" data-i18n="navGames">Игры</a>
+    <a aria-current="page" href="index.html" data-i18n="navHome">Главная</a><a href="learn.html" data-i18n="navLearn">Учиться</a><a href="daily.html" data-i18n="navToday">Сегодня</a><a href="map.html" data-i18n="navMap">Карта знаний</a><a href="simulator.html" data-i18n="navSimulator">Симулятор</a><a href="progress.html" data-i18n="navProgress">Прогресс</a><a href="library.html" data-i18n="navLibrary">Библиотека</a><a href="games.html" data-i18n="navGames">Игры</a>
   </nav>
 
   <main id="main">
@@ -43,8 +43,8 @@
         <div class="eyebrow" data-i18n="heroEyebrow">НЕ ТРИВИЯ. КОНТЕКСТ.</div>
         <h1><span data-i18n="heroTitleA">Интересный факт —</span><br><em data-i18n="heroTitleB">это только начало.</em></h1>
         <p class="hero-text" data-i18n="heroText">Короткие интерактивные уроки о мозге, психике, веществах и риске.</p>
-        <div class="hero-actions"><a class="btn primary" href="learn.html">Начать учиться</a><a class="btn ghost" href="daily.html">Вопрос дня</a></div>
-        <div class="hero-stats" aria-label="Project statistics"><span><strong id="cardCount">16</strong> <span data-i18n="cardStat">карточек</span></span><span><strong>3</strong> <span data-i18n="languageStat">языка</span></span><span><strong>5</strong> новых режимов</span></div>
+        <div class="hero-actions"><a class="btn primary" href="learn.html" data-i18n="heroLearn">Начать учиться</a><a class="btn ghost" href="daily.html" data-i18n="heroDaily">Вопрос дня</a></div>
+        <div class="hero-stats" aria-label="Project statistics"><span><strong id="cardCount">16</strong> <span data-i18n="cardStat">карточек</span></span><span><strong>3</strong> <span data-i18n="languageStat">языка</span></span><span><strong>5</strong> <span data-i18n="newModesStat">новых режимов</span></span></div>
       </div>
       <aside class="hero-card game-preview" aria-label="Learning preview">
         <div class="preview-orbit" aria-hidden="true">OR</div><div class="preview-copy"><span class="tag" data-i18n="interactive">Интерактив</span><h2>4× ≠ 40%</h2><p data-i18n="previewText">Относительная мера не является абсолютной вероятностью.</p><a href="games.html#odds-lab" data-i18n="tryLab">Открыть лабораторию →</a></div>
@@ -52,14 +52,14 @@
     </section>
 
     <section class="section-shell learning-paths" aria-labelledby="academyTitle">
-      <div class="section-heading"><div><div class="eyebrow">НОВЫЙ УРОВЕНЬ</div><h2 id="academyTitle">Учись, исследуй, возвращайся.</h2><p>Теперь сайт работает не только как библиотека, но и как учебная система: маршруты, карта тем, ежедневная задача, симулятор исследования и повторение.</p></div></div>
+      <div class="section-heading"><div><div class="eyebrow" data-i18n="academyHomeEyebrow">НОВЫЙ УРОВЕНЬ</div><h2 id="academyTitle" data-i18n="academyHomeTitle">Учись, исследуй, возвращайся.</h2><p data-i18n="academyHomeText">Теперь сайт работает не только как библиотека, но и как учебная система.</p></div></div>
       <div class="path-grid">
-        <a class="path-card" href="learn.html"><span class="path-icon" aria-hidden="true">▶</span><h3>Мини-курсы</h3><p>Короткие маршруты по риску, дизайну исследований и веществам</p></a>
-        <a class="path-card" href="map.html"><span class="path-icon" aria-hidden="true">◎</span><h3>Карта знаний</h3><p>Связи между статистикой, мозгом, методами и веществами</p></a>
-        <a class="path-card" href="daily.html"><span class="path-icon" aria-hidden="true">◆</span><h3>Вопрос дня</h3><p>Одна короткая задача на интерпретацию данных каждый день</p></a>
-        <a class="path-card" href="simulator.html"><span class="path-icon" aria-hidden="true">⚙</span><h3>Симулятор исследования</h3><p>Собери дизайн и увидь, где появляется bias</p></a>
+        <a class="path-card" href="learn.html"><span class="path-icon" aria-hidden="true">▶</span><h3 data-i18n="courseCardTitle">Мини-курсы</h3><p data-i18n="courseCardText">Короткие маршруты по риску, дизайну исследований и веществам</p></a>
+        <a class="path-card" href="map.html"><span class="path-icon" aria-hidden="true">◎</span><h3 data-i18n="mapCardTitle">Карта знаний</h3><p data-i18n="mapCardText">Связи между статистикой, мозгом, методами и веществами</p></a>
+        <a class="path-card" href="daily.html"><span class="path-icon" aria-hidden="true">◆</span><h3 data-i18n="dailyCardTitle">Вопрос дня</h3><p data-i18n="dailyCardText">Одна короткая задача на интерпретацию данных каждый день</p></a>
+        <a class="path-card" href="simulator.html"><span class="path-icon" aria-hidden="true">⚙</span><h3 data-i18n="simCardTitle">Симулятор исследования</h3><p data-i18n="simCardText">Собери дизайн и увидь, где появляется bias</p></a>
       </div>
-      <div class="section-cta"><a class="btn primary" href="progress.html">Мой прогресс</a><a class="btn ghost" href="learn.html">Выбрать курс</a></div>
+      <div class="section-cta"><a class="btn primary" href="progress.html" data-i18n="myProgress">Мой прогресс</a><a class="btn ghost" href="learn.html" data-i18n="chooseCourse">Выбрать курс</a></div>
     </section>
 
     <section class="section-shell learning-paths" aria-labelledby="pathsTitle">
@@ -83,10 +83,10 @@
     </section>
   </main>
 
-  <nav class="bottom-nav" data-i18n-aria="bottomNav" aria-label="Нижняя навигация"><a class="active" aria-current="page" href="index.html"><span aria-hidden="true">⌂</span><b data-i18n="navHome">Главная</b></a><a href="learn.html"><span aria-hidden="true">▶</span><b>Учиться</b></a><a href="daily.html"><span aria-hidden="true">◆</span><b>Сегодня</b></a><a href="progress.html"><span aria-hidden="true">✓</span><b>Прогресс</b></a></nav>
+  <nav class="bottom-nav" data-i18n-aria="bottomNav" aria-label="Нижняя навигация"><a class="active" aria-current="page" href="index.html"><span aria-hidden="true">⌂</span><b data-i18n="navHome">Главная</b></a><a href="learn.html"><span aria-hidden="true">▶</span><b data-i18n="navLearn">Учиться</b></a><a href="daily.html"><span aria-hidden="true">◆</span><b data-i18n="navToday">Сегодня</b></a><a href="progress.html"><span aria-hidden="true">✓</span><b data-i18n="navProgress">Прогресс</b></a></nav>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <noscript><div class="noscript" data-i18n="noscript">Для интерактивов нужен JavaScript.</div></noscript>
   <footer class="site-footer section-shell"><span>© <span id="year"></span> <span data-i18n="brand">Это сложнее</span></span><span data-i18n="footerA">Факты меняются вместе с данными.</span><span data-i18n="footerB">Образовательный проект — не медицинская консультация.</span></footer>
-  <script src="data.js"></script><script src="extras.js"></script><script src="script.js"></script><script src="progress-hook.js"></script>
+  <script src="data.js"></script><script src="extras.js"></script><script src="home-academy.js"></script><script src="script.js"></script><script src="progress-hook.js"></script>
 </body>
 </html>
