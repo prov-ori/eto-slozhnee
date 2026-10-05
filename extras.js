@@ -46,4 +46,7 @@
   if (!document.querySelector('script[data-site-nav]')) {
     const s=document.createElement('script');s.src='site-nav.js';s.defer=true;s.dataset.siteNav='1';document.head.appendChild(s);
   }
+  if (!document.querySelector('script[data-static-share]')) {
+    const s=document.createElement('script');s.src='share-patch.js';s.defer=true;s.dataset.staticShare='1';document.head.appendChild(s);
+  }
 })();
