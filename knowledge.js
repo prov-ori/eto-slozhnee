@@ -94,10 +94,10 @@
       const q=(query?.value||'').trim().toLocaleLowerCase(lang);
       const list=K.concepts.filter(c=>(dom==='all'||c.domain===dom)&&(!q||[tx(c.title),tx(c.text),tx(domain(c.domain)?.label)].join(' ').toLocaleLowerCase(lang).includes(q)));
       mount.innerHTML=list.map(conceptCard).join('')||'<div class="empty-state">0</div>';
-      if(location.hash){const id=decodeURIComponent(location.hash.slice(1));document.getElementById(id)?.scrollIntoView({block:'center'})}
+      if(location.hash){let id='';try{id=decodeURIComponent(location.hash.slice(1))}catch{}document.getElementById(id)?.scrollIntoView({block:'center'})}
     };
     if(filters){filters.innerHTML=domainChips(active);bindFilter(draw)}
-    query?.addEventListener('input',()=>draw(active));
+    if(query)query.oninput=()=>draw(active);
     draw(active);
   }
 
@@ -112,9 +112,9 @@
         const chosen=Number(b.dataset.i),ok=chosen===c.right;if(ok)score++;
         $$('.case-option',mount).forEach((x,i)=>{x.disabled=true;x.classList.toggle('correct',i===c.right);x.classList.toggle('wrong',i===chosen&&i!==c.right)});
         $('.case-feedback',mount).innerHTML=`<strong>${ok?tr('correct'):tr('incorrect')}</strong><p><b>${tr('why')}:</b> ${tx(c.explain)}</p><div class="concept-links"><b>${tr('related')}:</b> ${(c.links||[]).map(id=>{const x=K.concepts.find(c=>c.id===id);return x?`<a href="concepts.html#${id}">${tx(x.title)}</a>`:''}).join('')}</div>`;
-        $('#caseNext').hidden=false;
+        $('.case-footer span',mount).textContent=`${score}/${idx+1}`;$('#caseNext').hidden=false;
       }));
-      $('#caseNext')?.addEventListener('click',()=>{idx=(idx+1)%K.cases.length;answered=false;draw();$('.reasoning-card')?.focus()});
+      $('#caseNext')?.addEventListener('click',()=>{idx=(idx+1)%K.cases.length;if(idx===0)score=0;answered=false;draw();$('.reasoning-card')?.focus()});
     };
     draw();
   }
@@ -135,7 +135,7 @@
       mount.innerHTML=K.books.filter(b=>(dom==='all'||b.domains.includes(dom))&&(!needle||`${b.title} ${b.author}`.toLocaleLowerCase(lang).includes(needle))).map(b=>`<article class="book-card"><div class="book-status ${b.status}">${tr(b.status==='ordered'?'statusOrdered':'statusOwned')}</div><h2>${b.title}</h2>${b.author?`<p class="book-author">${b.author}</p>`:''}<div class="book-domains">${b.domains.map(id=>{const d=domain(id);return `<a href="concepts.html?domain=${id}" class="domain-pill">${d?.icon||''} ${tx(d?.label)}</a>`}).join('')}</div></article>`).join('')||'<div class="empty-state">0</div>';
     };
     const filters=$('#bookFilters');if(filters){filters.innerHTML=domainChips(active);bindFilter(draw)}
-    q?.addEventListener('input',()=>draw(active));draw(active);
+    if(q)q.oninput=()=>draw(active);draw(active);
   }
 
   function renderConnections(){

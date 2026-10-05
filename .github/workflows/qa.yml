@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-
 jobs:
   qa:
     runs-on: ubuntu-latest
@@ -18,3 +17,5 @@ jobs:
           node-version: 22
       - name: Run static checks
         run: node qa.mjs
+      - name: Run regression tests
+        run: node --test regression.test.mjs
