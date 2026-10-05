@@ -48,6 +48,11 @@
   }
   function applyI18n(){
     document.documentElement.lang=lang;
+    const shell={ru:{menu:'Меню',theme:'Тёмная тема',language:'Язык',skip:'Перейти к содержанию'},en:{menu:'Menu',theme:'Dark theme',language:'Language',skip:'Skip to content'},et:{menu:'Menüü',theme:'Tume teema',language:'Keel',skip:'Liigu sisu juurde'}}[lang];
+    if($('#menuToggle'))$('#menuToggle').textContent=shell.menu;
+    $('#themeToggle')?.setAttribute('aria-label',shell.theme);
+    $('#languageSelect')?.setAttribute('aria-label',shell.language);
+    if($('.skip-link'))$('.skip-link').textContent=shell.skip;
     $$('[data-k18n]').forEach(el=>{const v=tr(el.dataset.k18n);if(v)el.textContent=v});
     $$('[data-k18n-placeholder]').forEach(el=>el.setAttribute('placeholder',tr(el.dataset.k18nPlaceholder)));
     const s=$('#languageSelect');if(s)s.value=lang;
@@ -72,6 +77,7 @@
     const mount=$('#academyMount');if(!mount)return;
     const localLabs={ru:['Лаборатории','Память, внимание, framing и MCDA — через действие.'],en:['Labs','Memory, attention, framing and MCDA through interaction.'],et:['Laborid','Mälu, tähelepanu, raamistamine ja MCDA läbi tegevuse.']}[lang];
     const cards=[
+      {key:'workshop',icon:'↗',href:'workshop.html',title:tr('workshop'),text:tr('workshopText')},
       {key:'courses',icon:'▶',href:'learn.html',title:tr('courses'),text:tr('academyText')},
       {key:'concepts',icon:'◎',href:'concepts.html',title:tr('concepts'),text:tr('conceptsText')},
       {key:'cases',icon:'⌕',href:'cases.html',title:tr('cases'),text:tr('casesText')},
@@ -132,10 +138,10 @@
     const q=$('#bookSearch');let active='all';
     const draw=dom=>{
       active=dom;const needle=(q?.value||'').trim().toLocaleLowerCase(lang);
-      mount.innerHTML=K.books.filter(b=>(dom==='all'||b.domains.includes(dom))&&(!needle||`${b.title} ${b.author}`.toLocaleLowerCase(lang).includes(needle))).map(b=>`<article class="book-card"><div class="book-status ${b.status}">${tr(b.status==='ordered'?'statusOrdered':'statusOwned')}</div><h2>${b.title}</h2>${b.author?`<p class="book-author">${b.author}</p>`:''}<div class="book-domains">${b.domains.map(id=>{const d=domain(id);return `<a href="concepts.html?domain=${id}" class="domain-pill">${d?.icon||''} ${tx(d?.label)}</a>`}).join('')}</div></article>`).join('')||'<div class="empty-state">0</div>';
+      mount.innerHTML=K.books.filter(b=>(dom==='all'||b.domains.includes(dom))&&(!needle||`${b.title} ${b.author}`.toLocaleLowerCase(lang).includes(needle))).map(b=>`<article class="book-card" id="${b.id}"><div class="book-status ${b.status}">${tr(b.status==='ordered'?'statusOrdered':'statusOwned')}</div><h2>${b.title}</h2><p class="book-author">${b.author||tr('authorUnknown')}</p><div class="book-format">${tx(b.formatLabel)}</div><p class="book-reading-lens">${tx(b.readingLens)}</p><div class="book-domains">${b.domains.map(id=>{const d=domain(id);return `<a href="concepts.html?domain=${id}" class="domain-pill">${d?.icon||''} ${tx(d?.label)}</a>`}).join('')}</div><div class="book-route-links">${(window.ETO_WORKSHOP?.modules||[]).filter(m=>m.books.includes(b.id)).map(m=>`<a href="workshop.html?topic=${m.id}">${tx(m.title)} →</a>`).join('')}</div></article>`).join('')||`<div class="empty-state">${tr('noBooks')}</div>`;
     };
     const filters=$('#bookFilters');if(filters){filters.innerHTML=domainChips(active);bindFilter(draw)}
-    if(q)q.oninput=()=>draw(active);draw(active);
+    if(q)q.oninput=()=>draw(active);draw(active);let bookId='';try{bookId=decodeURIComponent(location.hash.slice(1))}catch{}if(/^book-\d+$/.test(bookId))document.getElementById(bookId)?.scrollIntoView({block:'center'});
   }
 
   function renderConnections(){
