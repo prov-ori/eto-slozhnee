@@ -3,7 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Это сложнее — короткие факты о мозге, психике и веществах с контекстом, оговорками и источниками." />
+  <meta name="description" content="Это сложнее — интерактивные факты о мозге, психике, веществах и риске: с источниками, силой доказательств и границами вывода." />
+  <meta name="theme-color" content="#f4f0e8" />
+  <meta property="og:title" content="Это сложнее — факты с контекстом" />
+  <meta property="og:description" content="Что нашли? Насколько этому можно доверять? Что из этого нельзя заключать?" />
+  <meta property="og:type" content="website" />
   <title>Это сложнее — факты с контекстом</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,6 +15,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#facts">К карточкам</a>
   <div class="noise" aria-hidden="true"></div>
 
   <header class="site-header">
@@ -18,12 +23,14 @@
       <span class="brand-mark">э</span>
       <span>Это сложнее</span>
     </a>
-    <nav class="nav" aria-label="Основная навигация">
+    <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mainNav">Меню</button>
+    <nav class="nav" id="mainNav" aria-label="Основная навигация">
       <a href="#facts">Факты</a>
       <a href="#method">Как читаем исследования</a>
+      <a href="#standards">Стандарты</a>
       <a href="#about">О проекте</a>
     </nav>
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему">◐</button>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему" aria-pressed="false">◐</button>
   </header>
 
   <main id="top">
@@ -31,112 +38,322 @@
       <div class="hero-copy">
         <div class="eyebrow">НЕ ТРИВИЯ. КОНТЕКСТ.</div>
         <h1>Интересный факт —<br><span>это только начало.</span></h1>
-        <p class="hero-text">Короткие утверждения о мозге, психике и веществах. Сначала — интуитивный ответ. Потом — что действительно показывают данные, где границы вывода и почему цифры легко понять неправильно.</p>
+        <p class="hero-text">Каждая карточка отвечает на три вопроса: <strong>что нашли</strong>, <strong>насколько этому можно доверять</strong> и <strong>что из этого нельзя заключать</strong>. Без превращения относительного риска в личную судьбу.</p>
         <div class="hero-actions">
           <a class="btn primary" href="#facts">Проверить себя</a>
-          <a class="btn ghost" href="#method">Как устроены карточки</a>
+          <a class="btn ghost" href="#standards">Как оцениваем данные</a>
+        </div>
+        <div class="hero-stats" aria-label="О проекте в цифрах">
+          <span><strong>16</strong> карточек</span>
+          <span><strong>4</strong> темы</span>
+          <span><strong>05.10.2026</strong> последняя проверка</span>
         </div>
       </div>
 
       <aside class="hero-card" aria-label="Пример карточки">
         <div class="card-topline">
           <span class="tag">Вещества</span>
-          <span class="evidence">● обзор данных</span>
+          <span class="evidence-badge" data-level="3" title="Высокая уверенность в основном тезисе">●●● высокая</span>
         </div>
-        <p class="kicker">Что вернее?</p>
+        <p class="kicker">Разделяем механизм и вред</p>
         <h2>Никотин и сигаретный дым — это одно и то же по вреду?</h2>
-        <button class="reveal-button" data-target="heroReveal">Показать ответ</button>
+        <button class="reveal-button" data-target="heroReveal" aria-expanded="false" aria-controls="heroReveal">Показать ответ</button>
         <div class="reveal" id="heroReveal" hidden>
           <p><strong>Нет.</strong> Никотин — ключевой агент зависимости, но значительная часть смертности и канцерогенности курения связана с продуктами горения табака.</p>
-          <p class="caveat">Это не означает, что никотин безвреден. Речь о разделении зависимости и токсичности дыма.</p>
+          <p class="caveat"><strong>Не утверждаем:</strong> что никотин безвреден. Речь о разделении зависимости и токсичности дыма.</p>
+          <a class="source-link" href="https://www.ncbi.nlm.nih.gov/books/NBK179276/" target="_blank" rel="noreferrer">U.S. Surgeon General, 2014 ↗</a>
         </div>
       </aside>
     </section>
 
-    <section class="section-shell" id="facts">
+    <section class="section-shell facts-section" id="facts">
       <div class="section-heading">
         <div>
           <div class="eyebrow">КАРТОЧКИ</div>
           <h2>Сначала угадай. Потом проверь.</h2>
+          <p class="section-intro">После ответа мы показываем не только правильный вариант, но и границы интерпретации, тип данных и первичный источник.</p>
         </div>
         <div class="filters" role="group" aria-label="Фильтр по темам">
-          <button class="filter active" data-filter="all">Все</button>
-          <button class="filter" data-filter="substances">Вещества</button>
-          <button class="filter" data-filter="risk">Риск</button>
-          <button class="filter" data-filter="method">Метод</button>
+          <button class="filter active" data-filter="all" aria-pressed="true">Все</button>
+          <button class="filter" data-filter="substances" aria-pressed="false">Вещества</button>
+          <button class="filter" data-filter="brain" aria-pressed="false">Мозг</button>
+          <button class="filter" data-filter="risk" aria-pressed="false">Риск</button>
+          <button class="filter" data-filter="method" aria-pressed="false">Метод</button>
         </div>
       </div>
 
+      <div class="session-progress" aria-live="polite">
+        <div><span id="progressText">Отвечено 0 из 16</span><button class="text-button" id="resetAll" type="button">Сбросить</button></div>
+        <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+      </div>
+
       <div class="facts-grid" id="factsGrid">
-        <article class="fact-card" data-category="substances">
-          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence">● MCDA</span></div>
+        <article class="fact-card" id="alcohol-cannabis-harm" data-category="substances risk">
+          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence-badge" data-level="1" title="Модель зависит от выбранных критериев и экспертных весов">●○○ контекстная</span></div>
           <p class="kicker">Сравнение вреда</p>
           <h3>Можно ли сказать, что алкоголь «объективно опаснее» каннабиса?</h3>
           <button class="choice" data-answer="wrong">Да, всегда и для любого человека</button>
           <button class="choice" data-answer="right">Нет, это зависит от того, что именно считать вредом</button>
           <div class="feedback" hidden>
-            <p><strong>Точнее второй вариант.</strong> В ряде многокритериальных моделей алкоголь получает более высокий суммарный балл вреда для популяции. Но это не универсальный рейтинг токсичности для каждого употребления и каждого человека.</p>
-            <span class="source">Контекст: MCDA-модели вреда; вес критериев задаётся экспертно.</span>
+            <p><strong>Точнее второй вариант.</strong> В известной британской MCDA-модели алкоголь получил более высокий суммарный балл вреда, чем каннабис. Но MCDA объединяет разные виды индивидуального и общественного вреда с экспертно заданными весами.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что этот рейтинг является универсальной шкалой токсичности для каждого человека, дозы и ситуации.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Дизайн:</b> multicriteria decision analysis (MCDA), экспертная модель.</p><a href="https://doi.org/10.1016/S0140-6736(10)61462-6" target="_blank" rel="noreferrer">Nutt et al., Lancet, 2010 ↗</a></details>
           </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#alcohol-cannabis-harm" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
         </article>
 
-        <article class="fact-card" data-category="risk substances">
-          <div class="card-topline"><span class="tag">Риск</span><span class="evidence">● наблюдательные данные</span></div>
-          <p class="kicker">Относительный риск</p>
+        <article class="fact-card" id="odds-ratio-not-percent" data-category="risk method">
+          <div class="card-topline"><span class="tag">Риск</span><span class="evidence-badge" data-level="3" title="Базовый статистический принцип">●●● высокая</span></div>
+          <p class="kicker">Относительные меры</p>
           <h3>Если отношение шансов равно 4, означает ли это, что риск равен 40%?</h3>
           <button class="choice" data-answer="wrong">Да</button>
           <button class="choice" data-answer="right">Нет</button>
           <div class="feedback" hidden>
-            <p><strong>Нет.</strong> Отношение шансов не является абсолютной вероятностью. Без базового риска и дизайна исследования число «4» само по себе не говорит, сколько людей реально столкнутся с исходом.</p>
-            <span class="source">Ключевой принцип: относительные меры ≠ абсолютный риск.</span>
+            <p><strong>Нет.</strong> Odds ratio — относительная мера, а не абсолютная вероятность. Без базового риска и дизайна исследования число «4» не говорит, сколько людей реально столкнутся с исходом.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что OR и risk ratio взаимозаменяемы; при частых исходах они могут заметно различаться.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> методологический принцип интерпретации эффектов.</p><a href="https://training.cochrane.org/handbook/current/chapter-06" target="_blank" rel="noreferrer">Cochrane Handbook, Chapter 6 ↗</a></details>
           </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#odds-ratio-not-percent" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
         </article>
 
-        <article class="fact-card" data-category="substances risk">
-          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence">● EU-GEI</span></div>
+        <article class="fact-card" id="cannabis-psychosis" data-category="substances risk">
+          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence-badge" data-level="2" title="Наблюдательные данные: сильная ассоциация, но не рандомизированная причинность">●●○ средняя</span></div>
           <p class="kicker">Ассоциация ≠ судьба</p>
-          <h3>Ежедневное употребление высокопотентного каннабиса связано с более высоким риском психотических расстройств?</h3>
-          <button class="choice" data-answer="right">Да, связь наблюдалась</button>
+          <h3>Ежедневное употребление высокопотентного каннабиса связано с более высокими шансами первого эпизода психоза?</h3>
+          <button class="choice" data-answer="right">Да, такая связь наблюдалась</button>
           <button class="choice" data-answer="wrong">Нет, такой связи не находили</button>
           <div class="feedback" hidden>
-            <p><strong>Да, ассоциация наблюдалась.</strong> В исследовании EU-GEI ежедневное употребление высокопотентного каннабиса было связано с заметно более высоким отношением шансов первого эпизода психоза.</p>
-            <p class="caveat">Это наблюдательные данные. Они не превращают индивидуальный риск в заранее заданную вероятность и требуют учёта смешивающих факторов.</p>
-            <span class="source">Di Forti et al., Lancet Psychiatry, 2019.</span>
+            <p><strong>Да, ассоциация наблюдалась.</strong> В многоцентровом исследовании EU-GEI частое употребление высокопотентного каннабиса было связано с более высокими odds первого эпизода психоза.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что наблюдательное исследование задаёт вашу личную вероятность или полностью исключает смешивающие факторы и обратную причинность.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Дизайн:</b> многоцентровое case-control исследование.</p><a href="https://doi.org/10.1016/S2215-0366(19)30048-3" target="_blank" rel="noreferrer">Di Forti et al., Lancet Psychiatry, 2019 ↗</a></details>
           </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#cannabis-psychosis" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
         </article>
 
-        <article class="fact-card" data-category="substances">
-          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence">● клинический факт</span></div>
+        <article class="fact-card" id="alcohol-withdrawal" data-category="substances risk">
+          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence-badge" data-level="3" title="Клинические рекомендации и устоявшийся медицинский факт">●●● высокая</span></div>
           <p class="kicker">Синдром отмены</p>
           <h3>Отмена алкоголя после тяжёлого длительного употребления может быть опасной для жизни?</h3>
           <button class="choice" data-answer="right">Да</button>
           <button class="choice" data-answer="wrong">Нет, это просто неприятно</button>
           <div class="feedback" hidden>
-            <p><strong>Да.</strong> Тяжёлая алкогольная абстиненция может включать судороги и делирий и требует медицинской оценки.</p>
-            <p class="caveat">Карточка не заменяет медицинскую помощь и не предназначена для самостоятельного планирования отмены.</p>
+            <p><strong>Да.</strong> Тяжёлая алкогольная абстиненция может включать судороги и алкогольный делирий; таким состояниям может требоваться интенсивное медицинское наблюдение.</p>
+            <p class="caveat"><strong>Важно:</strong> карточка не предназначена для самостоятельного планирования отмены. При риске тяжёлой абстиненции нужна медицинская оценка.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> клиническое руководство.</p><a href="https://www.asam.org/quality-care/clinical-guidelines/alcohol-withdrawal-management" target="_blank" rel="noreferrer">ASAM Clinical Practice Guideline ↗</a></details>
           </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#alcohol-withdrawal" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
         </article>
 
-        <article class="fact-card" data-category="method">
-          <div class="card-topline"><span class="tag">Метод</span><span class="evidence">● причинность</span></div>
-          <p class="kicker">Читаем исследования</p>
+        <article class="fact-card" id="association-causation" data-category="method">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence-badge" data-level="3" title="Базовый принцип причинного вывода">●●● высокая</span></div>
+          <p class="kicker">Причинный вывод</p>
           <h3>Если две вещи связаны статистически, доказано ли, что одна вызывает другую?</h3>
           <button class="choice" data-answer="wrong">Да</button>
           <button class="choice" data-answer="right">Нет</button>
           <div class="feedback" hidden>
-            <p><strong>Нет.</strong> Ассоциация может отражать причинный эффект, обратную причинность, смешивающие факторы, ошибки измерения или их комбинацию. Дизайн исследования определяет, насколько сильный вывод допустим.</p>
+            <p><strong>Нет.</strong> Ассоциация может отражать причинный эффект, обратную причинность, смешивающие факторы, ошибки измерения или их комбинацию. Сила допустимого вывода зависит от дизайна и предпосылок анализа.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что наблюдательные исследования бесполезны; многие причинные вопросы именно ими и изучаются, но требуют более осторожной интерпретации.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> учебник по причинному выводу.</p><a href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/" target="_blank" rel="noreferrer">Hernán & Robins, Causal Inference ↗</a></details>
           </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#association-causation" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
         </article>
 
-        <article class="fact-card" data-category="method risk">
-          <div class="card-topline"><span class="tag">Метод</span><span class="evidence">● интерпретация</span></div>
+        <article class="fact-card" id="denominator" data-category="method risk">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence-badge" data-level="3" title="Базовый принцип описательной эпидемиологии">●●● высокая</span></div>
           <p class="kicker">Одна цифра — не ответ</p>
           <h3>Можно ли корректно сравнить «30% зависимости» и «60% зависимости», если знаменатели разные?</h3>
           <button class="choice" data-answer="wrong">Да, большее число всегда означает больший риск</button>
-          <button class="choice" data-answer="right">Нет, сначала нужен одинаковый знаменатель</button>
+          <button class="choice" data-answer="right">Нет, сначала нужен сопоставимый знаменатель</button>
           <div class="feedback" hidden>
-            <p><strong>Именно.</strong> «Среди всех когда-либо пробовавших» и «среди регулярных пользователей» — разные популяции. Сравнивать проценты без знаменателя — типичная статистическая ловушка.</p>
+            <p><strong>Именно.</strong> «Среди всех когда-либо пробовавших» и «среди регулярных пользователей» — разные популяции. Проценты без одинакового определения выборки нельзя сравнивать как одну и ту же вероятность.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что одинаковый знаменатель решает все проблемы; определения исхода, возраст и период наблюдения тоже должны быть сопоставимы.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> принцип интерпретации частот и рисков.</p><a href="https://www.cdc.gov/field-epi-manual/php/chapters/collecting-data.html" target="_blank" rel="noreferrer">CDC Field Epidemiology Manual ↗</a></details>
           </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#denominator" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="alcohol-cancer" data-category="substances risk">
+          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence-badge" data-level="3" title="Причинная связь признана IARC/WHO">●●● высокая</span></div>
+          <p class="kicker">Канцерогенность</p>
+          <h3>Алкоголь считается установленной причиной нескольких видов рака?</h3>
+          <button class="choice" data-answer="right">Да</button>
+          <button class="choice" data-answer="wrong">Нет, связь есть только с болезнями печени</button>
+          <div class="feedback" hidden>
+            <p><strong>Да.</strong> WHO/IARC указывают причинную связь алкоголя по меньшей мере с семью локализациями рака. Риск растёт с количеством употребляемого алкоголя; для ракового риска порог нулевого риска не установлен.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что любой человек, употребляющий алкоголь, обязательно заболеет раком. Это изменение вероятности, а не детерминированный исход.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> оценка международного агентства и совокупность эпидемиологических данных.</p><a href="https://www.who.int/europe/news-room/fact-sheets/item/alcohol-and-cancer" target="_blank" rel="noreferrer">WHO Europe: Alcohol and cancer, 2025 ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#alcohol-cancer" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="nrt-smoking" data-category="substances risk">
+          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence-badge" data-level="3" title="Систематические обзоры рандомизированных исследований">●●● высокая</span></div>
+          <p class="kicker">Никотин ≠ дым</p>
+          <h3>Никотин-заместительная терапия может помогать бросить курить, не воспроизводя токсичность горения сигарет?</h3>
+          <button class="choice" data-answer="right">Да</button>
+          <button class="choice" data-answer="wrong">Нет, никотин делает её эквивалентной сигаретам</button>
+          <div class="feedback" hidden>
+            <p><strong>Да.</strong> Cochrane нашёл высокую уверенность в том, что формы NRT повышают вероятность успешного отказа от курения; они доставляют никотин без продуктов горения табака.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что NRT полностью лишена побочных эффектов или подходит каждому без учёта противопоказаний и ситуации.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Дизайн:</b> систематический обзор рандомизированных исследований.</p><a href="https://www.cochrane.org/evidence/CD000146_can-nicotine-replacement-therapy-nrt-help-people-quit-smoking" target="_blank" rel="noreferrer">Cochrane Review: NRT ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#nrt-smoking" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="cannabis-driving" data-category="substances risk">
+          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence-badge" data-level="2" title="Мета-анализ наблюдательных исследований с остаточной неопределённостью">●●○ средняя</span></div>
+          <p class="kicker">Вождение</p>
+          <h3>Острое опьянение каннабисом связано с повышением риска ДТП?</h3>
+          <button class="choice" data-answer="right">Да, в среднем риск выше</button>
+          <button class="choice" data-answer="wrong">Нет, исследования не находят повышения</button>
+          <div class="feedback" hidden>
+            <p><strong>Да.</strong> Обновлённый мета-анализ 21 наблюдательного исследования нашёл статистически значимое повышение риска ДТП низкой–умеренной величины; оценки зависели от качества исследований и контроля смешивающих факторов.</p>
+            <p class="metric"><span>Пул OR</span><strong>≈ 1.36</strong><small>95% CI 1.15–1.61 в random-effects модели</small></p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что этот OR равен личной вероятности аварии или одинаков при любой дозе, времени после употребления и сочетании с алкоголем.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Дизайн:</b> мета-анализ; 21 наблюдательное исследование.</p><a href="https://doi.org/10.1111/add.13347" target="_blank" rel="noreferrer">Rogeberg & Elvik, Addiction, 2016 ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#cannabis-driving" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="sleep-debt" data-category="brain risk">
+          <div class="card-topline"><span class="tag">Мозг</span><span class="evidence-badge" data-level="2" title="Контролируемый лабораторный эксперимент, но небольшая и узкая выборка">●●○ средняя</span></div>
+          <p class="kicker">Сон и внимание</p>
+          <h3>Можно ли несколько ночей спать по 4–6 часов и полностью «привыкнуть» без накопления когнитивных потерь?</h3>
+          <button class="choice" data-answer="wrong">Да, субъективное привыкание означает отсутствие дефицита</button>
+          <button class="choice" data-answer="right">Нет, объективные дефициты могут накапливаться</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> В лабораторном эксперименте 14 дней ограничения сна до 4 или 6 часов сопровождались накоплением дозозависимых нарушений когнитивной производительности, тогда как субъективная сонливость росла гораздо слабее.</p>
+            <p class="metric"><span>Выборка</span><strong>n = 48</strong><small>здоровые взрослые 21–38 лет</small></p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что эти результаты одинаково переносятся на любой возраст, заболевание или реальную жизненную среду.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Дизайн:</b> рандомизированный лабораторный эксперимент с разными дозами сна.</p><a href="https://pubmed.ncbi.nlm.nih.gov/12683469/" target="_blank" rel="noreferrer">Van Dongen et al., Sleep, 2003 ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#sleep-debt" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="memory-wording" data-category="brain method">
+          <div class="card-topline"><span class="tag">Мозг</span><span class="evidence-badge" data-level="2" title="Классические лабораторные эксперименты; эффект относится к реконструктивной памяти">●●○ средняя</span></div>
+          <p class="kicker">Память реконструируется</p>
+          <h3>Может ли формулировка вопроса после события изменить последующее воспоминание?</h3>
+          <button class="choice" data-answer="right">Да</button>
+          <button class="choice" data-answer="wrong">Нет, память хранит неизменяемую запись</button>
+          <div class="feedback" hidden>
+            <p><strong>Да.</strong> В классических экспериментах Loftus и Palmer изменение глагола в вопросе о ДТП влияло на оценку скорости, а позже — на сообщения о деталях, которых в видео не было.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что любые воспоминания легко переписать или что наличие ошибки делает всю память ненадёжной.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Дизайн:</b> два лабораторных эксперимента.</p><a href="https://doi.org/10.1016/S0022-5371(74)80011-3" target="_blank" rel="noreferrer">Loftus & Palmer, 1974 ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#memory-wording" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="pvalue-truth" data-category="method risk">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence-badge" data-level="3" title="Стандартное определение p-value">●●● высокая</span></div>
+          <p class="kicker">p-value</p>
+          <h3>Если p = 0.03, означает ли это 97% вероятность, что гипотеза исследователей верна?</h3>
+          <button class="choice" data-answer="wrong">Да</button>
+          <button class="choice" data-answer="right">Нет</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> P-value не является вероятностью истинности гипотезы. Он характеризует совместимость наблюдаемых данных с заданной статистической моделью при её предпосылках.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что p-value бесполезны. Проблема — в интерпретации их как вероятности истины или как единственного критерия вывода.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> официальное методологическое заявление.</p><a href="https://www.amstat.org/asa/files/pdfs/p-valuestatement.pdf" target="_blank" rel="noreferrer">American Statistical Association, 2016 ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#pvalue-truth" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="pvalue-effect-size" data-category="method risk">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence-badge" data-level="3" title="Стандартный статистический принцип">●●● высокая</span></div>
+          <p class="kicker">Значимость ≠ важность</p>
+          <h3>Статистически значимый результат обязательно означает большой и practically important эффект?</h3>
+          <button class="choice" data-answer="wrong">Да</button>
+          <button class="choice" data-answer="right">Нет</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> Статистическая значимость не измеряет размер эффекта и его практическую или клиническую важность. Для этого нужны сами оценки эффекта, доверительные интервалы и контекст.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что маленький эффект всегда неважен: малые индивидуальные эффекты могут быть значимыми на уровне большой популяции.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> методологическое заявление.</p><a href="https://www.amstat.org/asa/files/pdfs/p-valuestatement.pdf" target="_blank" rel="noreferrer">ASA Statement on P-Values ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#pvalue-effect-size" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="rct-generalizability" data-category="method">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence-badge" data-level="3" title="Базовый принцип внешней валидности">●●● высокая</span></div>
+          <p class="kicker">Внешняя валидность</p>
+          <h3>Если исследование рандомизированное, его результат автоматически применим ко всем людям?</h3>
+          <button class="choice" data-answer="wrong">Да</button>
+          <button class="choice" data-answer="right">Нет</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> Рандомизация в первую очередь помогает внутренней валидности причинного сравнения внутри изученной выборки. Применимость к другим возрастам, условиям, дозам и системам здравоохранения — отдельный вопрос.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что RCT «хуже» реальной практики; просто внутреннюю и внешнюю валидность нельзя смешивать.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> методологический обзор.</p><a href="https://pubmed.ncbi.nlm.nih.gov/15639683/" target="_blank" rel="noreferrer">Rothwell, Lancet, 2005 ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#rct-generalizability" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="large-sample-bias" data-category="method">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence-badge" data-level="3" title="Базовый принцип дизайна исследований">●●● высокая</span></div>
+          <p class="kicker">Размер ≠ отсутствие смещения</p>
+          <h3>Очень большая выборка сама по себе устраняет confounding и систематические ошибки?</h3>
+          <button class="choice" data-answer="wrong">Да, достаточно набрать много участников</button>
+          <button class="choice" data-answer="right">Нет, большой n уменьшает случайную ошибку, но не исправляет дизайн автоматически</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> Большая выборка может сузить случайную неопределённость вокруг систематически смещённой оценки. Confounding, selection bias и ошибки измерения требуют решений в дизайне и анализе, а не только большего n.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что размер выборки не важен; он важен для точности и мощности, просто не заменяет валидный дизайн.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> учебник по причинному выводу.</p><a href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/" target="_blank" rel="noreferrer">Hernán & Robins, Causal Inference ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#large-sample-bias" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="confidence-interval" data-category="method risk">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence-badge" data-level="3" title="Базовый статистический принцип">●●● высокая</span></div>
+          <p class="kicker">Не только точечная оценка</p>
+          <h3>Достаточно ли сообщить «риск вырос на 30%», не показывая доверительный интервал и базовый риск?</h3>
+          <button class="choice" data-answer="wrong">Да, 30% уже описывает эффект</button>
+          <button class="choice" data-answer="right">Нет, без неопределённости и базы картина неполная</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> Одна относительная точечная оценка скрывает как статистическую неопределённость, так и абсолютный масштаб эффекта. Интервал и исходный риск часто меняют практическое впечатление от результата.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что доверительный интервал — это диапазон, в котором с 95% вероятностью лежит фиксированное истинное значение в обычной frequentist-интерпретации.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> руководство по представлению эффектов.</p><a href="https://training.cochrane.org/handbook/current/chapter-06" target="_blank" rel="noreferrer">Cochrane Handbook, Chapter 6 ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#confidence-interval" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="observational-useless" data-category="method">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence-badge" data-level="3" title="Принцип выбора дизайна под исследовательский вопрос">●●● высокая</span></div>
+          <p class="kicker">Иерархия не лестница</p>
+          <h3>Если исследование наблюдательное, значит ли это, что оно «ничего не доказывает» и его можно игнорировать?</h3>
+          <button class="choice" data-answer="wrong">Да</button>
+          <button class="choice" data-answer="right">Нет</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> Наблюдательные данные могут быть единственно реалистичным или этичным способом изучить многие воздействия. Их выводы зависят от качества дизайна, измерений и предпосылок причинного анализа.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что любой наблюдательный результат причинный. Категория дизайна — начало оценки, а не финальный вердикт.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> современная методология причинного вывода.</p><a href="https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/" target="_blank" rel="noreferrer">Hernán & Robins, Causal Inference ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#observational-useless" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="source-vs-headline" data-category="method risk">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence-badge" data-level="3" title="Правило критического чтения исследования">●●● высокая</span></div>
+          <p class="kicker">Читаем ниже заголовка</p>
+          <h3>Можно ли оценить медицинский вывод только по заголовку статьи или пресс-релиза?</h3>
+          <button class="choice" data-answer="wrong">Да, если заголовок содержит цифру</button>
+          <button class="choice" data-answer="right">Нет, нужны как минимум дизайн, популяция, эффект и ограничения</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> Заголовок почти никогда не содержит достаточной информации о знаменателе, comparator, исходах, длительности наблюдения и неопределённости. Именно эти детали определяют, что исследование реально поддерживает.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что научная статья автоматически безошибочна; первичный источник тоже нужно критически читать.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> редакционный принцип проекта, основанный на стандартной методологии критической оценки.</p><a href="https://www.cebm.ox.ac.uk/resources/ebm-tools/critical-appraisal-tools" target="_blank" rel="noreferrer">Oxford CEBM Critical Appraisal Tools ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#source-vs-headline" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
+        </article>
+
+        <article class="fact-card" id="relative-absolute" data-category="method risk">
+          <div class="card-topline"><span class="tag">Риск</span><span class="evidence-badge" data-level="3" title="Базовый принцип коммуникации риска">●●● высокая</span></div>
+          <p class="kicker">Относительное ≠ абсолютное</p>
+          <h3>Рост риска «на 100%» обязательно означает большое абсолютное изменение?</h3>
+          <button class="choice" data-answer="wrong">Да, 100% всегда очень много</button>
+          <button class="choice" data-answer="right">Нет, всё зависит от исходного риска</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> Удвоение риска с 1 на 10 000 до 2 на 10 000 и с 10% до 20% — одинаковые +100% относительно, но совершенно разные абсолютные изменения.</p>
+            <p class="caveat"><strong>Не утверждаем:</strong> что относительные меры не нужны. Они полезны, но лучше интерпретируются вместе с абсолютными величинами.</p>
+            <details class="source-details"><summary>Источник и качество данных</summary><p><b>Тип:</b> принцип представления эффектов.</p><a href="https://training.cochrane.org/handbook/current/chapter-15" target="_blank" rel="noreferrer">Cochrane Handbook, interpreting results ↗</a></details>
+          </div>
+          <div class="card-footer"><span>Проверено 05.10.2026</span><a class="permalink" href="#relative-absolute" aria-label="Ссылка на карточку">#</a><button class="share-button" type="button">Поделиться</button><button class="retry-button" type="button" hidden>Ещё раз</button></div>
         </article>
       </div>
     </section>
@@ -144,14 +361,37 @@
     <section class="method section-shell" id="method">
       <div class="method-copy">
         <div class="eyebrow">МЕТОД</div>
-        <h2>Что делает факт хорошим?</h2>
-        <p>Мы не хотим собирать максимальное количество удивительных утверждений. Цель — показывать, что именно известно, насколько сильны данные и в какой точке начинается интерпретация.</p>
+        <h2>Три слоя каждой карточки.</h2>
+        <p>Мы отделяем наблюдение от интерпретации. Сначала — результат исследования. Затем — насколько уверенно его можно читать. И только потом — границы вывода.</p>
       </div>
       <div class="principles">
-        <article><span>01</span><h3>Знаменатель</h3><p>«1 из 10 кого?» — первый вопрос к любому проценту.</p></article>
-        <article><span>02</span><h3>Абсолютный риск</h3><p>Относительное изменение без исходной вероятности легко переоценить.</p></article>
-        <article><span>03</span><h3>Причинность</h3><p>Наблюдаемая связь и доказанный причинный эффект — не одно и то же.</p></article>
-        <article><span>04</span><h3>Границы</h3><p>Возраст, доза, частота, состав продукта и контекст могут менять вывод.</p></article>
+        <article><span>01</span><h3>Что нашли?</h3><p>Эффект, направление связи, популяция и единица сравнения.</p></article>
+        <article><span>02</span><h3>Насколько уверенно?</h3><p>Дизайн, неопределённость, риск смещения и воспроизводимость.</p></article>
+        <article><span>03</span><h3>Что нельзя заключать?</h3><p>Личный риск, причинность и переносимость не появляются из одной цифры автоматически.</p></article>
+        <article><span>04</span><h3>Когда проверено?</h3><p>У каждой карточки есть дата проверки, потому что совокупность данных меняется.</p></article>
+      </div>
+    </section>
+
+    <section class="standards section-shell" id="standards">
+      <div class="standards-copy">
+        <div class="eyebrow">СТАНДАРТЫ</div>
+        <h2>Как читать индикатор уверенности.</h2>
+        <p>Это не автоматическая «оценка качества журнала» и не рейтинг истины. Это редакционная метка того, насколько уверенно текущая совокупность данных поддерживает именно формулировку карточки.</p>
+      </div>
+      <div class="confidence-grid">
+        <article><span class="evidence-badge" data-level="3">●●● высокая</span><h3>Высокая</h3><p>Устоявшийся методологический принцип, клинический консенсус или согласованная совокупность сильных данных.</p></article>
+        <article><span class="evidence-badge" data-level="2">●●○ средняя</span><h3>Средняя</h3><p>Стабильная ассоциация или контролируемый эксперимент, но остаются ограничения переноса, confounding или размера выборки.</p></article>
+        <article><span class="evidence-badge" data-level="1">●○○ контекстная</span><h3>Контекстная</h3><p>Модель или вывод существенно зависит от выбранных критериев, экспертных весов или конкретного способа измерения.</p></article>
+      </div>
+      <div class="editorial-policy">
+        <h3>Редакционные правила</h3>
+        <ul>
+          <li>Не переводим OR/RR в личный абсолютный риск без подходящего базового риска и совместимого дизайна.</li>
+          <li>Отмечаем наблюдательный дизайн и не маскируем ассоциацию словом «вызывает», если источник этого не поддерживает.</li>
+          <li>По возможности даём первичный источник или систематический обзор, а не пересказ в медиа.</li>
+          <li>Сохраняем дату проверки и явно пишем «что мы не утверждаем».</li>
+          <li>Исправление формулировки считается частью проекта, а не ошибкой, которую нужно скрывать.</li>
+        </ul>
       </div>
     </section>
 
@@ -160,9 +400,15 @@
         <div class="eyebrow">О ПРОЕКТЕ</div>
         <h2>«Это сложнее»</h2>
       </div>
-      <p>Экспериментальный evidence-first проект о мозге, психологии, психиатрии и веществах. Формат — короткие интерактивные карточки: тезис, ответ, объяснение, оговорка и источник. Здесь нет персональных диагнозов или медицинских рекомендаций.</p>
+      <div class="about-copy">
+        <p>Evidence-first проект о мозге, психологии, психиатрии, веществах и статистическом риске. Формат — короткие интерактивные карточки: вопрос, ответ, контекст, границы вывода, тип данных и источник.</p>
+        <p><strong>Это образовательный ресурс.</strong> Он не ставит диагнозы и не заменяет индивидуальную медицинскую консультацию. Для неотложных решений и лечения нужны клинические специалисты и данные конкретного человека.</p>
+        <p class="updated">Последняя редакционная проверка этой версии: <time datetime="2026-10-05">5 октября 2026</time>.</p>
+      </div>
     </section>
   </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
   <footer class="site-footer section-shell">
     <span>© <span id="year"></span> Это сложнее</span>
