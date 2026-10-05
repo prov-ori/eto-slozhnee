@@ -5,3 +5,38 @@ html{-webkit-text-size-adjust:100%}body{overflow-wrap:anywhere}.mobile-menu[hidd
 @media(max-width:430px){.site-header .language-picker{display:none}.site-header{gap:4px}.menu-toggle{padding-inline:10px}.fact-page .eyebrow{font-size:11px}.fact-hero h1{font-size:clamp(29px,8.8vw,40px)}.fact-meta .tag,.fact-meta .evidence-badge{font-size:11px}.section-shell{width:calc(100% - 20px)}}
 @media(max-width:380px){.icon-button{display:none}.menu-toggle{padding-inline:9px}.hero h1{font-size:41px}.hero-stats{grid-template-columns:1fr}.game-preview{display:block}.preview-orbit{margin-bottom:22px}.bottom-nav b{font-size:9px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Unified mobile shell: language/theme must never disappear on small screens. */
+@media(max-width:700px){
+  .site-header .language-picker{display:block!important;flex:0 0 auto}
+  .site-header .language-picker select{display:block!important;width:58px;max-width:58px;min-height:38px;padding:0 20px 0 7px;font-size:12px}
+  .site-header .icon-button{display:inline-grid!important;place-items:center;flex:0 0 38px;width:38px;min-height:38px}
+  .site-header .menu-toggle{display:inline-flex!important;align-items:center;justify-content:center;flex:0 0 auto;min-height:38px;padding-inline:9px}
+  .site-header .header-actions{min-width:0;flex:0 1 auto}
+  .mobile-menu a{min-height:44px;display:flex;align-items:center}
+  .mobile-menu a.active{font-weight:800}
+  .toolbar{max-width:100%}
+  .toolbar .search-box{min-width:0;flex:1 1 100%}
+  .toolbar select{max-width:100%;width:100%}
+  .course-view,.sim-layout,.progress-grid,.facts-grid,.library-grid,.glossary-grid,.method-grid{min-width:0}
+  .lesson-panel,.sim-card,.daily-card,.game-card,.fact-card,.library-item{min-width:0;overflow-wrap:break-word}
+  .lesson-list,.sim-steps,.map-toolbar,.filters,.path-grid{-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain}
+  .lesson-tab,.sim-option,.daily-option,.checkpoint-choice,.map-filter{touch-action:manipulation}
+  .sim-actions{align-items:stretch}
+  .sim-actions .btn{min-width:0}
+}
+@media(max-width:430px){
+  .site-header .language-picker{display:block!important}
+  .site-header{gap:4px}
+  .header-actions{gap:4px}
+  .menu-toggle{padding-inline:7px}
+  .fact-page .eyebrow{font-size:11px}
+  .fact-hero h1{font-size:clamp(29px,8.8vw,40px)}
+  .fact-meta .tag,.fact-meta .evidence-badge{font-size:11px}
+  .section-shell{width:calc(100% - 20px)}
+}
+@media(max-width:360px){
+  .site-header .language-picker select{width:52px;max-width:52px;padding-left:5px;padding-right:16px}
+  .site-header .icon-button{flex-basis:34px;width:34px}
+  .site-header .menu-toggle{font-size:12px;padding-inline:6px}
+}
