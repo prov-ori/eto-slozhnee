@@ -40,3 +40,35 @@ html{-webkit-text-size-adjust:100%}body{overflow-wrap:anywhere}.mobile-menu[hidd
   .site-header .icon-button{flex-basis:34px;width:34px}
   .site-header .menu-toggle{font-size:12px;padding-inline:6px}
 }
+
+/* 2026-10 mobile hardening: never let grid items or long controls widen the viewport. */
+html,body{width:100%;max-width:100%}main,.section-shell,.academy-shell,.course-view,.lesson-panel,.lesson-checkpoint,.checkpoint-options,.sim-layout,.sim-card,.daily-card,.knowledge-shell,.knowledge-toolbar,.concept-grid,.atlas-grid,.book-grid,.connection-list{min-width:0;max-width:100%}
+img,svg,video,canvas{max-width:100%}.choice,.checkpoint-choice,.daily-option,.sim-option,.game-option,.case-option{max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+@media(max-width:700px){
+  body{overflow-x:clip}
+  main{overflow-x:clip}
+  .section-shell,.site-header{max-width:calc(100vw - 20px)}
+  .course-view,.sim-layout{display:grid;grid-template-columns:minmax(0,1fr)!important;width:100%}
+  .course-view>* ,.sim-layout>*{min-width:0;max-width:100%}
+  .lesson-panel,.daily-card,.sim-card,.reasoning-card,.concept-card,.atlas-card,.book-card,.connection-card{width:100%;max-width:100%;overflow:hidden}
+  .lesson-panel h1,.lesson-panel h2,.lesson-panel h3,.sim-card h2,.daily-card h2,.reasoning-card h2{max-width:100%;overflow-wrap:anywhere}
+  .lesson-panel p,.sim-card p,.daily-card p,.concept-card p,.connection-card p{max-width:100%;overflow-wrap:anywhere}
+  .checkpoint-options{grid-template-columns:minmax(0,1fr);width:100%}
+  .checkpoint-choice{display:block;width:100%;min-width:0;padding:14px 15px;text-align:left;line-height:1.42;font-size:15px}
+  .lesson-actions{display:grid;grid-template-columns:1fr;gap:10px;width:100%}
+  .lesson-actions .btn{width:100%;min-width:0}
+  .lesson-list{max-width:100%;scrollbar-width:none}
+  .lesson-list::-webkit-scrollbar{display:none}
+  .lesson-tab{flex:0 0 min(78vw,280px);min-width:0;max-width:280px;white-space:normal}
+  .academy-hero h1,.knowledge-hero h1{overflow-wrap:normal;word-break:normal;hyphens:auto}
+  .bottom-nav{left:0;right:0;width:100%;max-width:100vw}
+}
+@media(max-width:430px){
+  .lesson-panel,.daily-card,.sim-card,.reasoning-card,.concept-card,.atlas-card,.book-card,.connection-card{border-radius:18px}
+  .lesson-panel{padding:16px!important}
+  .lesson-panel h2{font-size:clamp(27px,8vw,34px)!important;line-height:1.08!important}
+  .lesson-checkpoint{margin-top:24px!important;padding-top:20px!important}
+  .lesson-checkpoint h3{font-size:clamp(20px,6vw,26px)!important;line-height:1.2!important}
+  .checkpoint-choice{font-size:15px!important}
+  .academy-shell{padding-bottom:calc(96px + env(safe-area-inset-bottom))!important}
+}
