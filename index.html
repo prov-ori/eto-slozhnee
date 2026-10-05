@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="description" content="Evidence-first интерактивное обучение о мозге, психике, веществах и риске." />
   <meta name="theme-color" content="#f4f0e8" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Это сложнее" />
+  <meta property="og:description" content="Интерактивное evidence-first обучение о мозге, психике, веществах и риске." />
   <title>Это сложнее</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,11 +15,11 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body data-page="home">
-  <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main" data-i18n="skip">Перейти к содержанию</a>
   <header class="site-header app-header">
-    <a class="brand" href="index.html"><span class="brand-mark">э</span><span data-i18n="brand">Это сложнее</span></a>
-    <nav class="desktop-nav" aria-label="Primary">
-      <a class="active" href="index.html" data-i18n="navHome">Главная</a>
+    <a class="brand" href="index.html" aria-label="Home"><span class="brand-mark" aria-hidden="true">э</span><span data-i18n="brand">Это сложнее</span></a>
+    <nav class="desktop-nav" data-i18n-aria="primaryNav" aria-label="Основная навигация">
+      <a class="active" aria-current="page" href="index.html" data-i18n="navHome">Главная</a>
       <a href="library.html" data-i18n="navLibrary">Библиотека</a>
       <a href="games.html" data-i18n="navGames">Игры</a>
       <a href="glossary.html" data-i18n="navGlossary">Словарь</a>
@@ -28,8 +31,8 @@
       <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu"><span data-i18n="menu">Меню</span></button>
     </div>
   </header>
-  <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile" hidden>
-    <a href="index.html" data-i18n="navHome">Главная</a><a href="library.html" data-i18n="navLibrary">Библиотека</a><a href="games.html" data-i18n="navGames">Игры</a><a href="glossary.html" data-i18n="navGlossary">Словарь</a><a href="method.html" data-i18n="navMethod">Метод</a>
+  <nav class="mobile-menu" id="mobileMenu" data-i18n-aria="mobileNav" aria-label="Мобильное меню" hidden>
+    <a aria-current="page" href="index.html" data-i18n="navHome">Главная</a><a href="library.html" data-i18n="navLibrary">Библиотека</a><a href="games.html" data-i18n="navGames">Игры</a><a href="glossary.html" data-i18n="navGlossary">Словарь</a><a href="method.html" data-i18n="navMethod">Метод</a>
   </nav>
 
   <main id="main">
@@ -39,37 +42,38 @@
         <h1><span data-i18n="heroTitleA">Интересный факт —</span><br><em data-i18n="heroTitleB">это только начало.</em></h1>
         <p class="hero-text" data-i18n="heroText">Короткие интерактивные уроки о мозге, психике, веществах и риске.</p>
         <div class="hero-actions"><a class="btn primary" href="#facts" data-i18n="heroPrimary">Начать с карточек</a><a class="btn ghost" href="games.html" data-i18n="heroSecondary">Открыть игры</a></div>
-        <div class="hero-stats"><span><strong id="cardCount">16</strong> cards</span><span><strong>3</strong> languages</span><span><strong>4</strong> learning modes</span></div>
+        <div class="hero-stats" aria-label="Project statistics"><span><strong id="cardCount">16</strong> <span data-i18n="cardStat">карточек</span></span><span><strong>3</strong> <span data-i18n="languageStat">языка</span></span><span><strong>4</strong> <span data-i18n="modeStat">режима обучения</span></span></div>
       </div>
       <aside class="hero-card game-preview" aria-label="Learning preview">
-        <div class="preview-orbit">OR</div><div class="preview-copy"><span class="tag">Interactive</span><h2>4× ≠ 40%</h2><p>Относительная мера не является абсолютной вероятностью.</p><a href="games.html#odds-lab">Try the lab →</a></div>
+        <div class="preview-orbit" aria-hidden="true">OR</div><div class="preview-copy"><span class="tag" data-i18n="interactive">Интерактив</span><h2>4× ≠ 40%</h2><p data-i18n="previewText">Относительная мера не является абсолютной вероятностью.</p><a href="games.html#odds-lab" data-i18n="tryLab">Открыть лабораторию →</a></div>
       </aside>
     </section>
 
     <section class="section-shell learning-paths" aria-labelledby="pathsTitle">
       <div class="section-heading"><div><div class="eyebrow" data-i18n="exploreEyebrow">ИГРОВОЕ ОБУЧЕНИЕ</div><h2 id="pathsTitle" data-i18n="exploreTitle">Не только читать — пробовать.</h2><p data-i18n="exploreText">Интерактивы помогают почувствовать статистику руками.</p></div></div>
       <div class="path-grid">
-        <a class="path-card" href="games.html#risk-lab"><span class="path-icon">↗</span><h3>Risk Lab</h3><p>Relative → absolute risk</p></a>
-        <a class="path-card" href="games.html#bias-detective"><span class="path-icon">⌕</span><h3>Bias Detective</h3><p>Find design problems</p></a>
-        <a class="path-card" href="games.html#headline-lab"><span class="path-icon">Aa</span><h3>Headline Lab</h3><p>Deconstruct medical claims</p></a>
-        <a class="path-card" href="glossary.html"><span class="path-icon">≡</span><h3>Glossary</h3><p>Learn the language of evidence</p></a>
+        <a class="path-card" href="games.html#risk-lab"><span class="path-icon" aria-hidden="true">↗</span><h3 data-i18n="pathRiskTitle">Лаборатория риска</h3><p data-i18n="pathRiskText">От относительного к абсолютному риску</p></a>
+        <a class="path-card" href="games.html#bias-detective"><span class="path-icon" aria-hidden="true">⌕</span><h3 data-i18n="pathBiasTitle">Детектив искажений</h3><p data-i18n="pathBiasText">Находи проблемы дизайна</p></a>
+        <a class="path-card" href="games.html#headline-lab"><span class="path-icon" aria-hidden="true">Aa</span><h3 data-i18n="pathHeadlineTitle">Разбор заголовков</h3><p data-i18n="pathHeadlineText">Проверяй медицинские заявления</p></a>
+        <a class="path-card" href="glossary.html"><span class="path-icon" aria-hidden="true">≡</span><h3 data-i18n="pathGlossaryTitle">Словарь</h3><p data-i18n="pathGlossaryText">Освой язык доказательств</p></a>
       </div>
     </section>
 
     <section class="section-shell facts-section" id="facts">
       <div class="section-heading">
         <div><div class="eyebrow" data-i18n="cardsEyebrow">БЫСТРЫЕ КАРТОЧКИ</div><h2 data-i18n="cardsTitle">Угадай. Проверь. Разбери.</h2><p data-i18n="cardsIntro">Каждый ответ показывает границы вывода.</p></div>
-        <div class="filters" id="filters"><button class="filter active" data-filter="all" data-i18n="filterAll">Все</button><button class="filter" data-filter="substances" data-i18n="filterSubstances">Вещества</button><button class="filter" data-filter="brain" data-i18n="filterBrain">Мозг</button><button class="filter" data-filter="risk" data-i18n="filterRisk">Риск</button><button class="filter" data-filter="method" data-i18n="filterMethod">Метод</button></div>
+        <div class="filters" id="filters" role="group" aria-label="Filters"><button class="filter active" type="button" data-filter="all" aria-pressed="true" data-i18n="filterAll">Все</button><button class="filter" type="button" data-filter="substances" aria-pressed="false" data-i18n="filterSubstances">Вещества</button><button class="filter" type="button" data-filter="brain" aria-pressed="false" data-i18n="filterBrain">Мозг</button><button class="filter" type="button" data-filter="risk" aria-pressed="false" data-i18n="filterRisk">Риск</button><button class="filter" type="button" data-filter="method" aria-pressed="false" data-i18n="filterMethod">Метод</button></div>
       </div>
-      <div class="session-progress"><div><span id="progressText"></span><button class="text-button" id="resetAll" type="button" data-i18n="reset">Сбросить</button></div><div class="progress-track"><span id="progressBar"></span></div></div>
+      <div class="session-progress"><div><span id="progressText" aria-live="polite"></span><button class="text-button" id="resetAll" type="button" data-i18n="reset">Сбросить</button></div><div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progressBar"></span></div></div>
       <div class="facts-grid" id="factsGrid"></div>
       <div class="section-cta"><a class="btn primary" href="library.html" data-i18n="exploreLibrary">Вся библиотека</a><a class="btn ghost" href="games.html" data-i18n="exploreGames">Все интерактивы</a></div>
     </section>
   </main>
 
-  <nav class="bottom-nav" aria-label="Bottom navigation"><a class="active" href="index.html"><span>⌂</span><b data-i18n="navHome">Главная</b></a><a href="library.html"><span>▤</span><b data-i18n="navLibrary">Библиотека</b></a><a href="games.html"><span>✦</span><b data-i18n="navGames">Игры</b></a><a href="glossary.html"><span>Aa</span><b data-i18n="navGlossary">Словарь</b></a></nav>
-  <div class="toast" id="toast" role="status" hidden></div>
+  <nav class="bottom-nav" data-i18n-aria="bottomNav" aria-label="Нижняя навигация"><a class="active" aria-current="page" href="index.html"><span aria-hidden="true">⌂</span><b data-i18n="navHome">Главная</b></a><a href="library.html"><span aria-hidden="true">▤</span><b data-i18n="navLibrary">Библиотека</b></a><a href="games.html"><span aria-hidden="true">✦</span><b data-i18n="navGames">Игры</b></a><a href="glossary.html"><span aria-hidden="true">Aa</span><b data-i18n="navGlossary">Словарь</b></a></nav>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <noscript><div class="noscript" data-i18n="noscript">Для интерактивов нужен JavaScript.</div></noscript>
   <footer class="site-footer section-shell"><span>© <span id="year"></span> <span data-i18n="brand">Это сложнее</span></span><span data-i18n="footerA">Факты меняются вместе с данными.</span><span data-i18n="footerB">Образовательный проект — не медицинская консультация.</span></footer>
-  <script src="data.js"></script><script src="script.js"></script>
+  <script src="data.js"></script><script src="extras.js"></script><script src="script.js"></script>
 </body>
 </html>
