@@ -1,6 +1,18 @@
 (() => {
   const D = window.ETO_DATA;
   if (!D?.ui) return;
+
+  if (!document.querySelector('link[data-mobile-patch]')) {
+    const alreadyLoaded = [...document.querySelectorAll('link[rel="stylesheet"]')].some(link => /(?:^|\/)patch\.css(?:$|[?#])/.test(link.getAttribute('href') || ''));
+    if (!alreadyLoaded) {
+      const link=document.createElement('link');
+      link.rel='stylesheet';
+      link.href='patch.css';
+      link.dataset.mobilePatch='1';
+      document.head.appendChild(link);
+    }
+  }
+
   const extra = {
     ru: {
       skip:'Перейти к содержанию', primaryNav:'Основная навигация', mobileNav:'Мобильное меню', bottomNav:'Нижняя навигация',
