@@ -30,7 +30,6 @@
   }
   function applyTheme(){const stored=storage.get('eto-theme');const dark=stored==='dark'||(!stored&&matchMedia('(prefers-color-scheme: dark)').matches);document.body.classList.toggle('dark',dark);const b=$('#themeToggle');if(b){b.setAttribute('aria-pressed',String(dark));b.setAttribute('aria-label',tr('theme','Theme'))}const meta=$('meta[name="theme-color"]');if(meta)meta.content=dark?'#171715':'#f4f0e8'}
   function toggleTheme(){const dark=!document.body.classList.contains('dark');document.body.classList.toggle('dark',dark);storage.set('eto-theme',dark?'dark':'light');applyTheme()}
-  function focusMainHeading(){const h=$('main h1, main h2');if(h){h.setAttribute('tabindex','-1');requestAnimationFrame(()=>h.focus({preventScroll:true}))}}
   function applyI18n(){document.documentElement.lang=lang;$$('[data-a18n]').forEach(el=>{const v=tr(el.dataset.a18n);if(v!=='')el.textContent=v});const select=$('#languageSelect');if(select){select.value=lang;select.setAttribute('aria-label',tr('language','Language'))}document.title=`${tr(document.body.dataset.titleKey||'learn')} — ${tr('brand')}`;ensureA11y();applyTheme();renderCurrent()}
   function bindShell(){
     $('#themeToggle')?.addEventListener('click',toggleTheme);
@@ -64,7 +63,15 @@
     A.nodes.forEach(n=>{const b=document.createElement('button');b.type='button';b.className='knowledge-node';b.dataset.group=n.group;b.dataset.id=n.id;if(!mobile){b.style.left=`${n.x}%`;b.style.top=`${n.y}%`}b.innerHTML=`<strong>${tx(n.label)}</strong><small>${tx(n.desc)}</small>`;b.addEventListener('click',()=>showNode(n));panel.appendChild(b)});
     panel.setAttribute('aria-label',ex('mapList'));
     function showNode(n){const d=$('#mapDetail');if(!d)return;d.innerHTML=`<h2>${tx(n.label)}</h2><p>${tx(n.desc)}</p><a class="btn primary" href="${n.href}">${tr('open')}</a>`;d.setAttribute('tabindex','-1');d.focus({preventScroll:true});d.scrollIntoView({behavior:'smooth',block:'nearest'})}
-    $$('.map-filter').forEach(btn=>{btn.setAttribute('aria-pressed',String(btn.classList.contains('active')));btn.onclick=()=>{const g=btn.dataset.group;$$('.map-filter').forEach(x=>{const a=x===btn;x.classList.toggle('active',a);x.setAttribute('aria-pressed',String(a))});$$('.knowledge-node').forEach(n=>{const hide=g!=='all'&&n.dataset.group!==g;n.classList.toggle('dim',hide);if(mobile)n.hidden=hide});$$('.map-svg line').forEach(line=>{const a=A.nodes.find(n=>n.id===line.dataset.a),b=A.nodes.find(n=>n.id===line.dataset.b);line.style.opacity=g==='all'||a?.group===g||b?.group===g?'1':'.08'})}}
+    $$('.map-filter').forEach(btn=>{
+      btn.setAttribute('aria-pressed',String(btn.classList.contains('active')));
+      btn.onclick=()=>{
+        const g=btn.dataset.group;
+        $$('.map-filter').forEach(x=>{const active=x===btn;x.classList.toggle('active',active);x.setAttribute('aria-pressed',String(active))});
+        $$('.knowledge-node').forEach(n=>{const hide=g!=='all'&&n.dataset.group!==g;n.classList.toggle('dim',hide);if(mobile)n.hidden=hide});
+        $$('.map-svg line').forEach(line=>{const a=A.nodes.find(n=>n.id===line.dataset.a),b=A.nodes.find(n=>n.id===line.dataset.b);line.style.opacity=g==='all'||a?.group===g||b?.group===g?'1':'.08'});
+      };
+    });
   }
   function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
   function dayNumber(){const d=new Date();return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000)}
