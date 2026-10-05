@@ -1,4 +1,11 @@
 (() => {
+  if (!document.querySelector('link[href="patch.css"]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'patch.css';
+    document.head.appendChild(link);
+  }
+
   const D = window.ETO_DATA;
   if (!D?.ui) return;
   const extra = {
@@ -10,7 +17,7 @@
       selectionBias:'Selection bias · отбор', recallBias:'Recall bias · память', confoundingBias:'Confounding · смешение', randomError:'Случайная ошибка',
       headlineScenario:'«Новое исследование: кофе снижает риск болезни на 40%»', baselineRiskInfo:'Исходный риск', populationInfo:'Кого изучали', effectInfo:'Размер эффекта + неопределённость', designInfo:'Дизайн исследования', timeframeInfo:'Период наблюдения', celebrityInfo:'Мнение известного человека',
       riskLimit:'При таком исходном риске больший RR дал бы математически невозможный риск >100%; диапазон ограничен.',
-      backLibrary:'← В библиотеку', factEyebrow:'РАЗБОР ФАКТА', factNotFound:'Карточка не найдена.', factNotFoundText:'Возможно, ссылка устарела. Открой библиотеку и выбери материал там.', related:'Продолжить изучение',
+      backLibrary:'← В библиотеку', factEyebrow:'РАЗБОР ФАКТА', factNotFound:'Карточка не найдена.', factNotFoundText:'Возможно, ссылка устарела. Открой библиотеку и выбери материал там.', related:'Продолжить изучение', caveatLabel:'Границы вывода',
       menuClose:'Закрыть меню', darkTheme:'Тёмная тема', lightTheme:'Светлая тема', correctAnswer:'Правильный ответ', yourAnswer:'Ваш ответ',
       noscript:'Для интерактивов нужен JavaScript. Источники и базовая структура сайта остаются доступны, но упражнения работать не будут.',
       gameProgress:'Задание', ofShort:'из'
@@ -23,7 +30,7 @@
       selectionBias:'Selection bias', recallBias:'Recall bias', confoundingBias:'Confounding', randomError:'Random error',
       headlineScenario:'“New study: coffee cuts disease risk by 40%”', baselineRiskInfo:'Baseline risk', populationInfo:'Population studied', effectInfo:'Effect estimate + uncertainty', designInfo:'Study design', timeframeInfo:'Follow-up period', celebrityInfo:'Celebrity opinion',
       riskLimit:'At this baseline risk, a larger RR would imply an impossible risk above 100%; the range has been limited.',
-      backLibrary:'← Back to library', factEyebrow:'FACT DEEP DIVE', factNotFound:'Card not found.', factNotFoundText:'The link may be outdated. Open the library and choose the material there.', related:'Keep learning',
+      backLibrary:'← Back to library', factEyebrow:'FACT DEEP DIVE', factNotFound:'Card not found.', factNotFoundText:'The link may be outdated. Open the library and choose the material there.', related:'Keep learning', caveatLabel:'Limits of the conclusion',
       menuClose:'Close menu', darkTheme:'Dark theme', lightTheme:'Light theme', correctAnswer:'Correct answer', yourAnswer:'Your answer',
       noscript:'Interactive features require JavaScript. Sources and the basic site structure remain available, but exercises will not work.',
       gameProgress:'Question', ofShort:'of'
@@ -36,7 +43,7 @@
       selectionBias:'Selection bias · valikukallutatus', recallBias:'Recall bias · meenutamisviga', confoundingBias:'Confounding · segav tegur', randomError:'Juhuslik viga',
       headlineScenario:'„Uus uuring: kohv vähendab haiguse riski 40%“', baselineRiskInfo:'Algrisk', populationInfo:'Uuritud populatsioon', effectInfo:'Mõju hinnang + ebakindlus', designInfo:'Uuringudisain', timeframeInfo:'Jälgimisperiood', celebrityInfo:'Kuulsuse arvamus',
       riskLimit:'Selle algriski juures annaks suurem RR matemaatiliselt võimatu riski üle 100%; vahemik on piiratud.',
-      backLibrary:'← Tagasi teeki', factEyebrow:'FAKTI SÜVAANALÜÜS', factNotFound:'Kaarti ei leitud.', factNotFoundText:'Link võib olla aegunud. Ava teek ja vali materjal sealt.', related:'Jätka õppimist',
+      backLibrary:'← Tagasi teeki', factEyebrow:'FAKTI SÜVAANALÜÜS', factNotFound:'Kaarti ei leitud.', factNotFoundText:'Link võib olla aegunud. Ava teek ja vali materjal sealt.', related:'Jätka õppimist', caveatLabel:'Järelduse piirid',
       menuClose:'Sulge menüü', darkTheme:'Tume teema', lightTheme:'Hele teema', correctAnswer:'Õige vastus', yourAnswer:'Sinu vastus',
       noscript:'Interaktiivsed funktsioonid vajavad JavaScripti. Allikad ja saidi põhistruktuur jäävad kättesaadavaks, kuid harjutused ei tööta.',
       gameProgress:'Küsimus', ofShort:'/'
