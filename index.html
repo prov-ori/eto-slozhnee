@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Это сложнее — короткие факты о мозге, психике и веществах с контекстом, оговорками и источниками." />
+  <title>Это сложнее — факты с контекстом</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Это сложнее — на главную">
+      <span class="brand-mark">э</span>
+      <span>Это сложнее</span>
+    </a>
+    <nav class="nav" aria-label="Основная навигация">
+      <a href="#facts">Факты</a>
+      <a href="#method">Как читаем исследования</a>
+      <a href="#about">О проекте</a>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Переключить тему">◐</button>
+  </header>
+
+  <main id="top">
+    <section class="hero section-shell">
+      <div class="hero-copy">
+        <div class="eyebrow">НЕ ТРИВИЯ. КОНТЕКСТ.</div>
+        <h1>Интересный факт —<br><span>это только начало.</span></h1>
+        <p class="hero-text">Короткие утверждения о мозге, психике и веществах. Сначала — интуитивный ответ. Потом — что действительно показывают данные, где границы вывода и почему цифры легко понять неправильно.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#facts">Проверить себя</a>
+          <a class="btn ghost" href="#method">Как устроены карточки</a>
+        </div>
+      </div>
+
+      <aside class="hero-card" aria-label="Пример карточки">
+        <div class="card-topline">
+          <span class="tag">Вещества</span>
+          <span class="evidence">● обзор данных</span>
+        </div>
+        <p class="kicker">Что вернее?</p>
+        <h2>Никотин и сигаретный дым — это одно и то же по вреду?</h2>
+        <button class="reveal-button" data-target="heroReveal">Показать ответ</button>
+        <div class="reveal" id="heroReveal" hidden>
+          <p><strong>Нет.</strong> Никотин — ключевой агент зависимости, но значительная часть смертности и канцерогенности курения связана с продуктами горения табака.</p>
+          <p class="caveat">Это не означает, что никотин безвреден. Речь о разделении зависимости и токсичности дыма.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="section-shell" id="facts">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">КАРТОЧКИ</div>
+          <h2>Сначала угадай. Потом проверь.</h2>
+        </div>
+        <div class="filters" role="group" aria-label="Фильтр по темам">
+          <button class="filter active" data-filter="all">Все</button>
+          <button class="filter" data-filter="substances">Вещества</button>
+          <button class="filter" data-filter="risk">Риск</button>
+          <button class="filter" data-filter="method">Метод</button>
+        </div>
+      </div>
+
+      <div class="facts-grid" id="factsGrid">
+        <article class="fact-card" data-category="substances">
+          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence">● MCDA</span></div>
+          <p class="kicker">Сравнение вреда</p>
+          <h3>Можно ли сказать, что алкоголь «объективно опаснее» каннабиса?</h3>
+          <button class="choice" data-answer="wrong">Да, всегда и для любого человека</button>
+          <button class="choice" data-answer="right">Нет, это зависит от того, что именно считать вредом</button>
+          <div class="feedback" hidden>
+            <p><strong>Точнее второй вариант.</strong> В ряде многокритериальных моделей алкоголь получает более высокий суммарный балл вреда для популяции. Но это не универсальный рейтинг токсичности для каждого употребления и каждого человека.</p>
+            <span class="source">Контекст: MCDA-модели вреда; вес критериев задаётся экспертно.</span>
+          </div>
+        </article>
+
+        <article class="fact-card" data-category="risk substances">
+          <div class="card-topline"><span class="tag">Риск</span><span class="evidence">● наблюдательные данные</span></div>
+          <p class="kicker">Относительный риск</p>
+          <h3>Если отношение шансов равно 4, означает ли это, что риск равен 40%?</h3>
+          <button class="choice" data-answer="wrong">Да</button>
+          <button class="choice" data-answer="right">Нет</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> Отношение шансов не является абсолютной вероятностью. Без базового риска и дизайна исследования число «4» само по себе не говорит, сколько людей реально столкнутся с исходом.</p>
+            <span class="source">Ключевой принцип: относительные меры ≠ абсолютный риск.</span>
+          </div>
+        </article>
+
+        <article class="fact-card" data-category="substances risk">
+          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence">● EU-GEI</span></div>
+          <p class="kicker">Ассоциация ≠ судьба</p>
+          <h3>Ежедневное употребление высокопотентного каннабиса связано с более высоким риском психотических расстройств?</h3>
+          <button class="choice" data-answer="right">Да, связь наблюдалась</button>
+          <button class="choice" data-answer="wrong">Нет, такой связи не находили</button>
+          <div class="feedback" hidden>
+            <p><strong>Да, ассоциация наблюдалась.</strong> В исследовании EU-GEI ежедневное употребление высокопотентного каннабиса было связано с заметно более высоким отношением шансов первого эпизода психоза.</p>
+            <p class="caveat">Это наблюдательные данные. Они не превращают индивидуальный риск в заранее заданную вероятность и требуют учёта смешивающих факторов.</p>
+            <span class="source">Di Forti et al., Lancet Psychiatry, 2019.</span>
+          </div>
+        </article>
+
+        <article class="fact-card" data-category="substances">
+          <div class="card-topline"><span class="tag">Вещества</span><span class="evidence">● клинический факт</span></div>
+          <p class="kicker">Синдром отмены</p>
+          <h3>Отмена алкоголя после тяжёлого длительного употребления может быть опасной для жизни?</h3>
+          <button class="choice" data-answer="right">Да</button>
+          <button class="choice" data-answer="wrong">Нет, это просто неприятно</button>
+          <div class="feedback" hidden>
+            <p><strong>Да.</strong> Тяжёлая алкогольная абстиненция может включать судороги и делирий и требует медицинской оценки.</p>
+            <p class="caveat">Карточка не заменяет медицинскую помощь и не предназначена для самостоятельного планирования отмены.</p>
+          </div>
+        </article>
+
+        <article class="fact-card" data-category="method">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence">● причинность</span></div>
+          <p class="kicker">Читаем исследования</p>
+          <h3>Если две вещи связаны статистически, доказано ли, что одна вызывает другую?</h3>
+          <button class="choice" data-answer="wrong">Да</button>
+          <button class="choice" data-answer="right">Нет</button>
+          <div class="feedback" hidden>
+            <p><strong>Нет.</strong> Ассоциация может отражать причинный эффект, обратную причинность, смешивающие факторы, ошибки измерения или их комбинацию. Дизайн исследования определяет, насколько сильный вывод допустим.</p>
+          </div>
+        </article>
+
+        <article class="fact-card" data-category="method risk">
+          <div class="card-topline"><span class="tag">Метод</span><span class="evidence">● интерпретация</span></div>
+          <p class="kicker">Одна цифра — не ответ</p>
+          <h3>Можно ли корректно сравнить «30% зависимости» и «60% зависимости», если знаменатели разные?</h3>
+          <button class="choice" data-answer="wrong">Да, большее число всегда означает больший риск</button>
+          <button class="choice" data-answer="right">Нет, сначала нужен одинаковый знаменатель</button>
+          <div class="feedback" hidden>
+            <p><strong>Именно.</strong> «Среди всех когда-либо пробовавших» и «среди регулярных пользователей» — разные популяции. Сравнивать проценты без знаменателя — типичная статистическая ловушка.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="method section-shell" id="method">
+      <div class="method-copy">
+        <div class="eyebrow">МЕТОД</div>
+        <h2>Что делает факт хорошим?</h2>
+        <p>Мы не хотим собирать максимальное количество удивительных утверждений. Цель — показывать, что именно известно, насколько сильны данные и в какой точке начинается интерпретация.</p>
+      </div>
+      <div class="principles">
+        <article><span>01</span><h3>Знаменатель</h3><p>«1 из 10 кого?» — первый вопрос к любому проценту.</p></article>
+        <article><span>02</span><h3>Абсолютный риск</h3><p>Относительное изменение без исходной вероятности легко переоценить.</p></article>
+        <article><span>03</span><h3>Причинность</h3><p>Наблюдаемая связь и доказанный причинный эффект — не одно и то же.</p></article>
+        <article><span>04</span><h3>Границы</h3><p>Возраст, доза, частота, состав продукта и контекст могут менять вывод.</p></article>
+      </div>
+    </section>
+
+    <section class="about section-shell" id="about">
+      <div>
+        <div class="eyebrow">О ПРОЕКТЕ</div>
+        <h2>«Это сложнее»</h2>
+      </div>
+      <p>Экспериментальный evidence-first проект о мозге, психологии, психиатрии и веществах. Формат — короткие интерактивные карточки: тезис, ответ, объяснение, оговорка и источник. Здесь нет персональных диагнозов или медицинских рекомендаций.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer section-shell">
+    <span>© <span id="year"></span> Это сложнее</span>
+    <span>Факты меняются вместе с данными.</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
