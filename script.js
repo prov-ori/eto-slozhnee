@@ -11,8 +11,12 @@
     document.documentElement.lang = lang;
     $$('[data-i18n]').forEach(el=>{ const v=ui()[el.dataset.i18n]; if(v!=null) el.textContent=v; });
     $$('[data-i18n-placeholder]').forEach(el=>{ const v=ui()[el.dataset.i18nPlaceholder]; if(v!=null) el.placeholder=v; });
-    const select=$('#languageSelect'); if(select) select.value=lang;
-    document.title = ui().brand || 'Это сложнее';
+    const select=$('#languageSelect'); if(select){select.value=lang;select.setAttribute('aria-label',ui().language||'Language');}
+    $('#themeToggle')?.setAttribute('aria-label',ui().theme||'Theme');
+    const page=document.body.dataset.page;
+    const pageLabels={home:'brand',library:'navLibrary',games:'navGames',glossary:'navGlossary',method:'navMethod'};
+    const label=ui()[pageLabels[page]||'brand'];
+    document.title=page==='home'?ui().brand:`${label} — ${ui().brand}`;
   }
 
   function evidence(level){ return ui()['level'+level] || ''; }
@@ -36,9 +40,7 @@
     const cards = document.body.dataset.page==='home' ? DATA.cards.slice(0,8) : DATA.cards;
     grid.innerHTML=cards.map(cardHTML).join('');
     $('#cardCount') && ($('#cardCount').textContent=DATA.cards.length);
-    bindCards(grid);
-    filterCards(activeFilter);
-    updateProgress();
+    bindCards(grid); filterCards(activeFilter); updateProgress();
     if(location.hash){ const t=$(location.hash); if(t) setTimeout(()=>t.scrollIntoView({block:'center'}),60); }
   }
 
@@ -47,8 +49,8 @@
       const card=DATA.cards.find(x=>x.id===cardEl.id); if(!card) return;
       const choices=$$('.choice',cardEl), feedback=$('.feedback',cardEl), retry=$('.retry-button',cardEl);
       choices.forEach(btn=>btn.addEventListener('click',()=>{
-        const idx=Number(btn.dataset.index);
-        choices.forEach((b,i)=>{b.disabled=true;b.classList.toggle('correct',i===card[lang].right);b.classList.toggle('wrong',i===idx&&i!==card[lang].right);});
+        const idx=Number(btn.dataset.index), right=(card[lang]||card.ru).right;
+        choices.forEach((b,i)=>{b.disabled=true;b.classList.toggle('correct',i===right);b.classList.toggle('wrong',i===idx&&i!==right);});
         feedback.hidden=false; retry.hidden=false; answered.add(card.id); updateProgress();
       }));
       retry?.addEventListener('click',()=>resetCard(cardEl));
@@ -57,15 +59,14 @@
   }
 
   function resetCard(el){ $$('.choice',el).forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong')}); const f=$('.feedback',el); if(f) f.hidden=true; const r=$('.retry-button',el); if(r) r.hidden=true; answered.delete(el.id); updateProgress(); }
-  function updateProgress(){ const visible=$$('.fact-card').filter(x=>x.style.display!=='none'); const n=visible.filter(x=>answered.has(x.id)).length; const t=visible.length; const p=$('#progressText'); if(p)p.textContent=`${ui().answered} ${n} ${ui().of} ${t}`; const b=$('#progressBar');if(b)b.style.width=t?`${n/t*100}%`:'0%'; }
-  function filterCards(cat){ activeFilter=cat; $$('.filter').forEach(b=>b.classList.toggle('active',b.dataset.filter===cat)); $$('.fact-card').forEach(c=>{c.style.display=cat==='all'||c.dataset.category.split(' ').includes(cat)?'flex':'none'}); updateProgress(); }
-  $$('.filter').forEach(b=>b.addEventListener('click',()=>filterCards(b.dataset.filter)));
-  $('#resetAll')?.addEventListener('click',()=>{$$('.fact-card').forEach(resetCard)});
+  function updateProgress(){ const visible=$$('.fact-card').filter(x=>x.style.display!=='none'); const n=visible.filter(x=>answered.has(x.id)).length,t=visible.length; const p=$('#progressText');if(p)p.textContent=`${ui().answered} ${n} ${ui().of} ${t}`;const b=$('#progressBar');if(b)b.style.width=t?`${n/t*100}%`:'0%'; }
+  function filterCards(cat){ activeFilter=cat; $$('.filter').forEach(b=>{b.classList.toggle('active',b.dataset.filter===cat);b.setAttribute('aria-pressed',String(b.dataset.filter===cat));});$$('.fact-card').forEach(c=>{c.style.display=cat==='all'||c.dataset.category.split(' ').includes(cat)?'flex':'none'});updateProgress();}
+  $$('.filter').forEach(b=>b.addEventListener('click',()=>filterCards(b.dataset.filter))); $('#resetAll')?.addEventListener('click',()=>{$$('.fact-card').forEach(resetCard)});
 
   const toast=$('#toast'); let tt; function showToast(msg){if(!toast)return;toast.textContent=msg;toast.hidden=false;clearTimeout(tt);tt=setTimeout(()=>toast.hidden=true,1800)}
-  async function shareCard(card){ const c=card[lang]||card.ru; const url=`${location.origin}${location.pathname}#${card.id}`; try{if(navigator.share)await navigator.share({title:ui().brand,text:c.q,url});else{await navigator.clipboard.writeText(url);showToast(ui().copied)}}catch(e){if(e.name!=='AbortError')showToast(ui().shareFail)}}
+  async function shareCard(card){ const c=card[lang]||card.ru,url=`${location.origin}${location.pathname}#${card.id}`;try{if(navigator.share)await navigator.share({title:ui().brand,text:c.q,url});else{await navigator.clipboard.writeText(url);showToast(ui().copied)}}catch(e){if(e.name!=='AbortError')showToast(ui().shareFail)}}
 
-  function renderLibrary(){ const grid=$('#libraryGrid'); if(!grid)return; const q=($('#librarySearch')?.value||'').trim().toLowerCase(); const cat=$('#libraryCategory')?.value||'all'; const list=DATA.cards.filter(card=>{const c=card[lang]||card.ru; const text=[c.q,c.kicker,c.tag,c.answer].join(' ').toLowerCase(); return (!q||text.includes(q))&&(cat==='all'||card.category.split(' ').includes(cat));}); grid.innerHTML=list.length?list.map(card=>{const c=card[lang]||card.ru;return `<article class="library-item"><div class="card-topline"><span class="tag">${c.tag}</span><span class="evidence-badge" data-level="${card.level}">${evidence(card.level)}</span></div><h3>${c.q}</h3><p>${c.answer}</p><a href="index.html#${card.id}">${ui().openCard} →</a></article>`}).join(''):`<div class="empty-state">${ui().noResults}</div>`; }
+  function renderLibrary(){ const grid=$('#libraryGrid');if(!grid)return;const q=($('#librarySearch')?.value||'').trim().toLowerCase(),cat=$('#libraryCategory')?.value||'all';const list=DATA.cards.filter(card=>{const c=card[lang]||card.ru,text=[c.q,c.kicker,c.tag,c.answer].join(' ').toLowerCase();return(!q||text.includes(q))&&(cat==='all'||card.category.split(' ').includes(cat));});grid.innerHTML=list.length?list.map(card=>{const c=card[lang]||card.ru;return `<article class="library-item"><div class="card-topline"><span class="tag">${c.tag}</span><span class="evidence-badge" data-level="${card.level}">${evidence(card.level)}</span></div><h3>${c.q}</h3><p>${c.answer}</p><a href="index.html#${card.id}">${ui().openCard} →</a></article>`}).join(''):`<div class="empty-state">${ui().noResults}</div>`; }
   $('#librarySearch')?.addEventListener('input',renderLibrary); $('#libraryCategory')?.addEventListener('change',renderLibrary);
 
   function renderGlossary(){ const grid=$('#glossaryGrid');if(!grid)return;const q=($('#glossarySearch')?.value||'').trim().toLowerCase();const list=DATA.glossary.filter(x=>`${x.term[lang]||x.term.ru} ${x.def[lang]||x.def.ru}`.toLowerCase().includes(q));grid.innerHTML=list.map(x=>`<article class="glossary-card"><h2>${x.term[lang]||x.term.ru}</h2><p>${x.def[lang]||x.def.ru}</p></article>`).join(''); }
@@ -80,15 +81,14 @@
     {q:{ru:'У курящих чаще бывает болезнь, но анализ не учитывает возраст, хотя курящие участники заметно старше.',en:'Smokers have more disease, but the analysis ignores age even though smokers are much older.',et:'Suitsetajatel on haigust rohkem, kuid analüüs ei arvesta vanust, kuigi suitsetajad on palju vanemad.'},a:'confounding',e:{ru:'Возраст связан и с группой, и с исходом и может искажать связь.',en:'Age is related to both exposure group and outcome and may distort the association.',et:'Vanus on seotud nii kokkupuute kui tulemusega ja võib seost moonutada.'}}
   ];
   let biasIndex=0,biasScore=0;
-  function renderBias(){const s=biasScenarios[biasIndex%biasScenarios.length];const box=$('#biasScenario');if(!box)return;box.textContent=s.q[lang]||s.q.ru;$$('.game-option[data-bias]').forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong')});$('#biasFeedback').textContent='';$('#biasScore').textContent=`${ui().score}: ${biasScore}`;}
+  function renderBias(){const s=biasScenarios[biasIndex%biasScenarios.length],box=$('#biasScenario');if(!box)return;box.textContent=s.q[lang]||s.q.ru;$$('.game-option[data-bias]').forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong')});$('#biasFeedback').textContent='';$('#biasScore').textContent=`${ui().score}: ${biasScore}`;}
   $$('.game-option[data-bias]').forEach(b=>b.addEventListener('click',()=>{const s=biasScenarios[biasIndex%biasScenarios.length],ok=b.dataset.bias===s.a;if(ok)biasScore++;$$('.game-option[data-bias]').forEach(x=>{x.disabled=true;x.classList.toggle('correct',x.dataset.bias===s.a);x.classList.toggle('wrong',x===b&&!ok)});$('#biasFeedback').textContent=`${ok?ui().correct:ui().incorrect}: ${s.e[lang]||s.e.ru}`;$('#biasScore').textContent=`${ui().score}: ${biasScore}`;}));
   $('#biasNext')?.addEventListener('click',()=>{biasIndex++;renderBias()});
+  $('#headlineCheck')?.addEventListener('click',()=>{const needed=['baseline','population','effect','design'];let hit=0;needed.forEach(id=>{if($(`#h-${id}`)?.checked)hit++});const out=$('#headlineFeedback');if(out)out.textContent=`${hit}/4 — ${hit===4?ui().correct:ui().incorrect}`;});
 
-  $('#headlineCheck')?.addEventListener('click',()=>{const needed=['baseline','population','effect','design'];let hit=0;needed.forEach(id=>{const el=$(`#h-${id}`);if(el?.checked)hit++});const out=$('#headlineFeedback');if(out)out.textContent=`${hit}/4 — ${hit===4?ui().correct:ui().incorrect}`;});
-
-  const theme=$('#themeToggle'); const storedTheme=localStorage.getItem('eto-theme'); if(storedTheme==='dark'||(!storedTheme&&matchMedia('(prefers-color-scheme: dark)').matches))document.body.classList.add('dark'); theme?.setAttribute('aria-pressed',String(document.body.classList.contains('dark'))); theme?.addEventListener('click',()=>{document.body.classList.toggle('dark');const d=document.body.classList.contains('dark');localStorage.setItem('eto-theme',d?'dark':'light');theme.setAttribute('aria-pressed',String(d));});
+  const theme=$('#themeToggle'),storedTheme=localStorage.getItem('eto-theme');if(storedTheme==='dark'||(!storedTheme&&matchMedia('(prefers-color-scheme: dark)').matches))document.body.classList.add('dark');theme?.setAttribute('aria-pressed',String(document.body.classList.contains('dark')));theme?.addEventListener('click',()=>{document.body.classList.toggle('dark');const d=document.body.classList.contains('dark');localStorage.setItem('eto-theme',d?'dark':'light');theme.setAttribute('aria-pressed',String(d));});
   const menu=$('#menuToggle'),mobile=$('#mobileMenu');menu?.addEventListener('click',()=>{const open=mobile.hasAttribute('hidden');mobile.toggleAttribute('hidden');menu.setAttribute('aria-expanded',String(open))});
   $('#languageSelect')?.addEventListener('change',e=>{lang=e.target.value;localStorage.setItem('eto-lang',lang);applyI18n();renderCards();renderLibrary();renderGlossary();renderBias();});
 
-  applyI18n(); renderCards(); renderLibrary(); renderGlossary(); initRiskLab(); initOddsLab(); renderBias(); const y=$('#year');if(y)y.textContent=new Date().getFullYear();
+  applyI18n();renderCards();renderLibrary();renderGlossary();initRiskLab();initOddsLab();renderBias();const y=$('#year');if(y)y.textContent=new Date().getFullYear();
 })();
