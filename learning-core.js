@@ -5,7 +5,22 @@
   const DAY=86400000;
   const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k,v){try{localStorage.setItem(k,v);return true}catch{return false}},remove(k){try{localStorage.removeItem(k)}catch{}}};
   const blank=()=>({version:2,cards:{},courses:{},daily:{},meta:{createdAt:Date.now()}});
-  function normalize(p){p=p&&typeof p==='object'?p:blank();p.version=2;p.cards ||= {};p.courses ||= {};p.daily ||= {};p.meta ||= {};return p}
+  const object=v=>v&&typeof v==='object'&&!Array.isArray(v);
+  function normalize(p){
+    p=object(p)?p:blank();p.version=2;
+    for(const key of ['cards','courses','daily','meta'])if(!object(p[key]))p[key]={};
+    for(const [id,card] of Object.entries(p.cards)){
+      if(!object(card)){delete p.cards[id];continue}
+      for(const key of ['attempts','correct','repetitions','interval'])card[key]=Math.max(0,Math.floor(Number(card[key])||0));
+      card.correct=Math.min(card.correct,card.attempts);
+    }
+    for(const [id,course] of Object.entries(p.courses)){
+      if(!object(course)){delete p.courses[id];continue}
+      course.done=Array.isArray(course.done)?course.done.filter(x=>typeof x==='string'):[];
+      if(!object(course.mastery))course.mastery={};
+    }
+    return p;
+  }
   function migrate(){
     const current=store.get(KEY);if(current)return;
     const raw=store.get(LEGACY);if(!raw)return;

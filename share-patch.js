@@ -2,7 +2,7 @@
   'use strict';
 
   const factIdFromLocation = () => {
-    const staticMatch = location.pathname.match(/\/facts\/([^/]+)\.html$/);
+    const staticMatch = location.pathname.match(/\/facts\/([^/]+?)(?:\.html)?$/);
     if (staticMatch) return decodeURIComponent(staticMatch[1]);
     const queryId = new URLSearchParams(location.search).get('id');
     if (queryId) return queryId;
@@ -14,9 +14,9 @@
 
   const staticFactUrl = id => {
     const basePath = location.pathname.includes('/facts/')
-      ? location.pathname.replace(/facts\/[^/]+\.html$/, '')
+      ? location.pathname.replace(/facts\/[^/]+$/, '')
       : location.pathname.replace(/[^/]*$/, '');
-    return `${location.origin}${basePath}facts/${encodeURIComponent(id)}.html`;
+    return `${location.origin}${basePath}fact.html?id=${encodeURIComponent(id)}`;
   };
 
   const copyText = async text => {
