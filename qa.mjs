@@ -42,12 +42,14 @@ for(const file of htmlFiles){
 
   const page=(text.match(/<body[^>]*data-page=["']([^"']+)["']/i)||[])[1];
   const required={
+    workshop:['routeGrid','routeDetail','routeSearch','routeFilters','workshopProgress','bayesLab','receptorLab','consequencesLab','interviewLab'],
     learn:['courseGrid','courseView'],map:['knowledgeMap','mapDetail'],daily:['dailyMount'],simulator:['simMount'],progress:['progressMount'],
     games:['baselineRisk','relativeRisk','oddsBase','oddsRatio','biasScenario','headlineCheck'],library:['librarySearch','libraryGrid'],glossary:['glossarySearch','glossaryGrid'],
     academy:['academyMount'],concepts:['conceptMount','conceptFilters','conceptSearch'],cases:['caseMount'],atlas:['atlasMount','atlasFilters'],books:['bookMount','bookFilters','bookSearch'],connections:['connectionMount'],
     labs:['memoryStage','attentionTask','frameBase','frameRR','mcdaOutput']
   };
   for(const id of required[page]||[])if(!ids.includes(id))failures.push(`${rel}: ${page} page missing required #${id}`);
+  if(page==='workshop')for(const src of ['workshop-data.js','workshop-models.js','workshop-activities.js','workshop.js'])if(!text.includes(`src="${src}"`))failures.push(`${rel}: missing ${src}`);
   if(['learn','map','daily','simulator','progress'].includes(page)&&!/<script src=["']academy\.js["']/.test(text))failures.push(`${rel}: academy page missing academy.js`);
   if(['academy','concepts','cases','atlas','books','connections'].includes(page)&&!/<script src=["']knowledge\.js["']/.test(text))failures.push(`${rel}: knowledge page missing knowledge.js`);
   if(page==='labs'&&!/<script src=["']knowledge-labs\.js["']/.test(text))failures.push(`${rel}: labs page missing knowledge-labs.js`);
