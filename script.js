@@ -2,7 +2,6 @@
   'use strict';
 
   const DATA = window.ETO_DATA || { ui: {}, cards: [], glossary: [] };
-  const SUPPORTED_LANGS = ['ru', 'et', 'en'];
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
@@ -11,15 +10,15 @@
     set(key, value) { try { localStorage.setItem(key, value); } catch {} }
   };
 
-  const savedLang = safeStorage.get('eto-lang');
-  const browserLang = (navigator.language || 'ru').slice(0, 2).toLowerCase();
-  let lang = SUPPORTED_LANGS.includes(savedLang) ? savedLang : (SUPPORTED_LANGS.includes(browserLang) ? browserLang : 'ru');
+  const I = window.ETO_I18N;
+  const E = window.ETO_EXPERIENCE_DATA;
+  const prefix = document.body.dataset.factId ? "../" : "";
+  let lang = I.get();
   let activeFilter = 'all';
   const answers = new Map();
 
-  const ui = () => DATA.ui[lang] || DATA.ui.ru || {};
-  const tr = (key, fallback = '') => ui()[key] ?? fallback;
-  const cardText = card => card?.[lang] || card?.ru || {};
+  const tr = (key, fallback = "") => I.translate(DATA.ui, key, fallback);
+  const cardText = card => I.pick(card, {});
   const evidence = level => tr(`level${level}`);
 
   function safeHashId() {
@@ -74,7 +73,7 @@
       ${c.options.map((option, index) => `<button class="choice${hasAnswer && index === right ? ' correct' : ''}${hasAnswer && index === answerState && index !== right ? ' wrong' : ''}" data-index="${index}" type="button" ${hasAnswer ? 'disabled' : ''} aria-pressed="${hasAnswer && index === answerState ? 'true' : 'false'}">${option}</button>`).join('')}
       <div class="feedback" ${hasAnswer ? '' : 'hidden'}><p><strong>${c.answer}</strong></p><p class="caveat">${c.caveat}</p>
       <details class="source-details"><summary>${tr('sourceQuality')}</summary><p><b>${c.design}</b></p><a href="${card.source}" target="_blank" rel="noopener noreferrer">${card.sourceName} ↗</a></details></div>
-      <div class="card-footer"><span>${tr('checked')}</span><button class="share-button" type="button">${tr('share')}</button><button class="retry-button" type="button" ${hasAnswer ? '' : 'hidden'}>${tr('retry')}</button></div>
+      <div class="card-footer"><a href="${prefix}${E.fact(card.id)}">${tr('openCard')}</a><span>${tr('checked')}</span><button class="share-button" type="button">${tr('share')}</button><button class="retry-button" type="button" ${hasAnswer ? '' : 'hidden'}>${tr('retry')}</button></div>
     </article>`;
   }
 
@@ -200,8 +199,7 @@
 
   async function shareCard(card) {
     const c = cardText(card);
-    const base = `${location.origin}${location.pathname.replace(/[^/]*$/, '')}`;
-    const url = `${base}fact.html?id=${encodeURIComponent(card.id)}`;
+    const url = new URL(prefix + E.fact(card.id), location.href).href;
     try {
       if (navigator.share) await navigator.share({ title: tr('brand'), text: c.q, url });
       else { await copyText(url); showToast(tr('copied')); }
@@ -223,7 +221,7 @@
 
     grid.innerHTML = list.length ? list.map(card => {
       const c = cardText(card);
-      return `<article class="library-item"><div class="card-topline"><span class="tag">${c.tag}</span><span class="evidence-badge" data-level="${card.level}">${evidence(card.level)}</span></div><h3>${c.q}</h3><p>${c.answer}</p><a href="fact.html?id=${encodeURIComponent(card.id)}">${tr('openCard')} →</a></article>`;
+      return `<article class="library-item"><div class="card-topline"><span class="tag">${c.tag}</span><span class="evidence-badge" data-level="${card.level}">${evidence(card.level)}</span></div><h3>${c.q}</h3><p>${c.answer}</p><a href="${prefix}${E.fact(card.id)}">${tr('openCard')} →</a></article>`;
     }).join('') : `<div class="empty-state">${tr('noResults')}</div>`;
   }
 
@@ -322,6 +320,7 @@
     const scenario = biasScenarios[biasIndex];
     const ok = button.dataset.bias === scenario.a;
     if (ok) biasScore += 1;
+    window.ETO_LEARNING.assess('bias:'+biasIndex,['bias'],ok);
     $$('.game-option[data-bias]').forEach(option => {
       option.disabled = true;
       option.classList.toggle('correct', option.dataset.bias === scenario.a);
@@ -343,13 +342,14 @@
     const neededHit = needed.filter(id => $(`#h-${id}`)?.checked).length;
     const distractorHit = distractors.filter(id => $(`#h-${id}`)?.checked).length;
     const perfect = neededHit === needed.length && distractorHit === 0;
+    window.ETO_LEARNING.assess('headline:check',['study-design','absolute-risk'],perfect);
     setText('#headlineFeedback', `${neededHit}/${needed.length} — ${perfect ? tr('correct') : tr('incorrect')}`);
   });
 
   function renderFactPage() {
     if (document.body.dataset.page !== 'fact') return;
     const params = new URLSearchParams(location.search);
-    const id = params.get('id') || safeHashId();
+    const id = document.body.dataset.factId || params.get('id') || safeHashId();
     const card = DATA.cards.find(item => item.id === id);
     const mount = $('#factMount');
     if (!mount) return;
@@ -359,6 +359,10 @@
       return;
     }
 
+    if (!document.body.dataset.factId) {
+      location.replace(E.fact(id) + (params.has("id") ? location.hash : ""));
+      return;
+    }
     const c = cardText(card);
     document.title = `${c.q} — ${tr('brand')}`;
     const title = $('#factTitle'); if (title) title.textContent = c.q;
@@ -369,11 +373,13 @@
     const caveat = $('#factCaveat'); if (caveat) caveat.textContent = c.caveat;
     const design = $('#factDesign'); if (design) design.textContent = c.design;
     const source = $('#factSource'); if (source) { source.href = card.source; source.textContent = `${card.sourceName} ↗`; }
+    $('#factDetails').innerHTML = window.ETO_MATERIALS.render('fact', card, lang);
+    window.ETO_EXPERIENCE.materialControls($('#factBookmark'), E.fact(id), Object.fromEntries(I.languages.map(code => [code, card[code].q])));
     const share = $('#factShare'); if (share) share.onclick = () => shareCard(card);
 
     const related = DATA.cards.filter(item => item.id !== card.id && item.category.split(' ').some(cat => card.category.split(' ').includes(cat))).slice(0, 3);
     const relatedGrid = $('#relatedGrid');
-    if (relatedGrid) relatedGrid.innerHTML = related.map(item => `<a class="library-item related-item" href="fact.html?id=${encodeURIComponent(item.id)}"><span class="tag">${cardText(item).tag}</span><h3>${cardText(item).q}</h3></a>`).join('');
+    if (relatedGrid) relatedGrid.innerHTML = related.map(item => `<a class="library-item related-item" href="${prefix}${E.fact(item.id)}"><span class="tag">${cardText(item).tag}</span><h3>${cardText(item).q}</h3></a>`).join('');
   }
 
   const themeButton = $('#themeToggle');
@@ -416,11 +422,8 @@
     if (!mobileMenu.contains(event.target) && !menuButton.contains(event.target)) closeMenu();
   });
 
-  $('#languageSelect')?.addEventListener('change', event => {
-    const next = event.target.value;
-    if (!SUPPORTED_LANGS.includes(next)) return;
-    lang = next;
-    safeStorage.set('eto-lang', lang);
+  window.addEventListener('eto:language', () => {
+    lang = I.get();
     applyI18n();
     renderCards();
     renderLibrary();
