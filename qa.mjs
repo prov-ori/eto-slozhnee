@@ -40,20 +40,26 @@ for(const file of htmlFiles){
     if(!/class=["'][^"']*bottom-nav/.test(text))failures.push(`${rel}: missing mobile bottom navigation`);
   }
 
+  const primary=['index.html','learn.html','explore.html','practice.html','progress.html'];
+  for(const nav of ['desktop-nav','mobile-menu','bottom-nav']){
+    const markup=text.match(new RegExp('<nav class="'+nav+'"[^>]*>([\\s\\S]*?)</nav>'))?.[1]||'';
+    const hrefs=[...markup.matchAll(/href="(?:\.\.\/)?([^"]+)"/g)].map(m=>m[1]);
+    if(hrefs.join(',')!==primary.join(','))failures.push(rel+': unexpected primary navigation in '+nav);
+  }
   const page=(text.match(/<body[^>]*data-page=["']([^"']+)["']/i)||[])[1];
   const required={
     workshop:['routeGrid','routeDetail','routeSearch','routeFilters','workshopProgress','bayesLab','receptorLab','consequencesLab','interviewLab'],
     learn:['courseGrid','courseView'],map:['knowledgeMap','mapDetail'],daily:['dailyMount'],simulator:['simMount'],progress:['progressMount'],
     games:['baselineRisk','relativeRisk','oddsBase','oddsRatio','biasScenario','headlineCheck'],library:['librarySearch','libraryGrid'],glossary:['glossarySearch','glossaryGrid'],
-    academy:['academyMount'],concepts:['conceptMount','conceptFilters','conceptSearch'],cases:['caseMount'],atlas:['atlasMount','atlasFilters'],books:['bookMount','bookFilters','bookSearch'],connections:['connectionMount'],
+    concepts:['conceptMount','conceptFilters','conceptSearch'],cases:['caseMount'],atlas:['atlasMount','atlasFilters'],books:['bookMount','bookFilters','bookSearch'],connections:['connectionMount'],
     labs:['memoryStage','attentionTask','frameBase','frameRR','mcdaOutput']
   };
   for(const id of required[page]||[])if(!ids.includes(id))failures.push(`${rel}: ${page} page missing required #${id}`);
   if(page==='workshop')for(const src of ['workshop-data.js','workshop-models.js','workshop-activities.js','workshop.js'])if(!text.includes(`src="${src}"`))failures.push(`${rel}: missing ${src}`);
   if(['learn','map','daily','simulator','progress'].includes(page)&&!/<script src=["']academy\.js["']/.test(text))failures.push(`${rel}: academy page missing academy.js`);
-  if(['academy','concepts','cases','atlas','books','connections'].includes(page)&&!/<script src=["']knowledge\.js["']/.test(text))failures.push(`${rel}: knowledge page missing knowledge.js`);
+  if(['concepts','cases','atlas','books','connections'].includes(page)&&!/<script src=["']knowledge\.js["']/.test(text))failures.push(`${rel}: knowledge page missing knowledge.js`);
   if(page==='labs'&&!/<script src=["']knowledge-labs\.js["']/.test(text))failures.push(`${rel}: labs page missing knowledge-labs.js`);
-  if(!isStaticFact&&['games','library','glossary','fact','home'].includes(page)&&!/<script src=["'](?:\.\.\/)?script\.js["']/.test(text))failures.push(`${rel}: classic interactive page missing script.js`);
+  if(['games','library','glossary','fact','home'].includes(page)&&!/<script src=["'](?:\.\.\/)?script\.js["']/.test(text))failures.push(`${rel}: classic interactive page missing script.js`);
 
   if(isStaticFact){
     for(const property of ['og:title','og:description','og:image','og:url'])if(!new RegExp(`<meta\\s+property=["']${property}["']`,'i').test(text))failures.push(`${rel}: missing ${property}`);

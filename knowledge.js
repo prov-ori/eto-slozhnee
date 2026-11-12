@@ -3,18 +3,16 @@
   const K=window.ETO_KNOWLEDGE;
   if(!K) return;
 
-  const SUP=['ru','en','et'];
+  const I=window.ETO_I18N;
   const $=(s,r=document)=>r.querySelector(s);
   const $$=(s,r=document)=>[...r.querySelectorAll(s)];
   const storage={
     get(k){try{return localStorage.getItem(k)}catch{return null}},
     set(k,v){try{localStorage.setItem(k,v)}catch{}}
   };
-  const browser=(navigator.language||'ru').slice(0,2).toLowerCase();
-  let lang=SUP.includes(storage.get('eto-lang'))?storage.get('eto-lang'):(SUP.includes(browser)?browser:'ru');
-  const ui=()=>K.ui[lang]||K.ui.ru;
-  const tr=k=>ui()[k]||k;
-  const tx=o=>o?.[lang]||o?.ru||o?.en||'';
+  let lang=I.get();
+  const tr=k=>I.translate(K.ui,k,k);
+  const tx=I.pick;
   const domain=id=>K.domains.find(d=>d.id===id);
 
   function applyTheme(){
@@ -32,12 +30,7 @@
   function bindShell(){
     applyTheme();
     $('#themeToggle')?.addEventListener('click',toggleTheme);
-    $('#languageSelect')?.addEventListener('change',e=>{
-      lang=e.target.value;
-      storage.set('eto-lang',lang);
-      applyI18n();
-      setTimeout(()=>window.dispatchEvent(new Event('eto:language')),0);
-    });
+    window.addEventListener('eto:language',()=>{lang=I.get();applyI18n()});
     const menu=$('#menuToggle'),mobile=$('#mobileMenu');
     const close=()=>{if(!mobile)return;mobile.hidden=true;menu?.setAttribute('aria-expanded','false')};
     menu?.addEventListener('click',()=>{const open=mobile.hidden;mobile.hidden=!open;menu.setAttribute('aria-expanded',String(open))});
@@ -70,23 +63,7 @@
   }
   function conceptCard(c){
     const d=domain(c.domain);
-    return `<article class="concept-card" id="${c.id}" data-domain="${c.domain}"><div class="concept-top"><span class="domain-pill">${d?.icon||''} ${tx(d?.label)}</span><span class="level-pill">${tr(c.level)}</span></div><h2>${tx(c.title)}</h2><p>${tx(c.text)}</p><div class="concept-links">${(c.links||[]).map(id=>{const x=K.concepts.find(c=>c.id===id);return x?`<a href="concepts.html#${x.id}">${tx(x.title)}</a>`:''}).join('')}</div></article>`;
-  }
-
-  function renderAcademy(){
-    const mount=$('#academyMount');if(!mount)return;
-    const localLabs={ru:['Лаборатории','Память, внимание, framing и MCDA — через действие.'],en:['Labs','Memory, attention, framing and MCDA through interaction.'],et:['Laborid','Mälu, tähelepanu, raamistamine ja MCDA läbi tegevuse.']}[lang];
-    const cards=[
-      {key:'workshop',icon:'↗',href:'workshop.html',title:tr('workshop'),text:tr('workshopText')},
-      {key:'courses',icon:'▶',href:'learn.html',title:tr('courses'),text:tr('academyText')},
-      {key:'concepts',icon:'◎',href:'concepts.html',title:tr('concepts'),text:tr('conceptsText')},
-      {key:'cases',icon:'⌕',href:'cases.html',title:tr('cases'),text:tr('casesText')},
-      {key:'labs',icon:'✦',href:'labs.html',title:localLabs[0],text:localLabs[1]},
-      {key:'atlas',icon:'◉',href:'atlas.html',title:tr('atlas'),text:tr('atlasText')},
-      {key:'books',icon:'▤',href:'books.html',title:tr('books'),text:tr('booksText')},
-      {key:'connections',icon:'⋈',href:'connections.html',title:tr('connections'),text:tr('connectionsText')}
-    ];
-    mount.innerHTML=`<div class="academy-hub-grid">${cards.map(c=>`<a class="academy-hub-card" href="${c.href}"><span class="academy-hub-icon">${c.icon}</span><h2>${c.title}</h2><p>${c.text}</p></a>`).join('')}</div><div class="knowledge-note">${tr('basisNote')}</div><section class="domain-overview"><h2>${tr('conceptsTitle')}</h2><div class="domain-grid">${K.domains.map(d=>{const n=K.concepts.filter(c=>c.domain===d.id).length;return `<a href="concepts.html?domain=${d.id}" class="domain-card"><span>${d.icon}</span><strong>${tx(d.label)}</strong><small>${n}</small></a>`}).join('')}</div></section>`;
+    return `<article class="concept-card" id="${c.id}" data-domain="${c.domain}"><div class="concept-top"><span class="domain-pill">${d?.icon||''} ${tx(d?.label)}</span><span class="level-pill">${tr(c.level)}</span></div><h2><a href="#${c.id}">${tx(c.title)}</a></h2><p>${tx(c.text)}</p><div data-concept-bookmark></div>${window.ETO_MATERIALS.render("concept",c,lang)}<div class="concept-links">${(c.links||[]).map(id=>{const x=K.concepts.find(c=>c.id===id);return x?`<a href="concepts.html#${x.id}">${tx(x.title)}</a>`:''}).join('')}</div></article>`;
   }
 
   function renderConcepts(){
@@ -100,7 +77,11 @@
       const q=(query?.value||'').trim().toLocaleLowerCase(lang);
       const list=K.concepts.filter(c=>(dom==='all'||c.domain===dom)&&(!q||[tx(c.title),tx(c.text),tx(domain(c.domain)?.label)].join(' ').toLocaleLowerCase(lang).includes(q)));
       mount.innerHTML=list.map(conceptCard).join('')||'<div class="empty-state">0</div>';
-      if(location.hash){let id='';try{id=decodeURIComponent(location.hash.slice(1))}catch{}document.getElementById(id)?.scrollIntoView({block:'center'})}
+      for (const card of mount.querySelectorAll('[data-concept-bookmark]')) {
+        const id=card.closest('article').id;
+        window.ETO_EXPERIENCE.materialControls(card,'concepts.html#'+id,K.concepts.find(c=>c.id===id).title,false);
+      }
+      if(location.hash){let id='';try{id=decodeURIComponent(location.hash.slice(1))}catch{}const card=document.getElementById(id);card?.scrollIntoView({block:'center'});const item=K.concepts.find(c=>c.id===id);if(item)window.ETO_EXPERIENCE.materialControls(card?.querySelector('[data-concept-bookmark]'),'concepts.html#'+id,item.title)}
     };
     if(filters){filters.innerHTML=domainChips(active);bindFilter(draw)}
     if(query)query.oninput=()=>draw(active);
@@ -116,6 +97,8 @@
       $$('.case-option',mount).forEach(b=>b.addEventListener('click',()=>{
         if(answered)return;answered=true;
         const chosen=Number(b.dataset.i),ok=chosen===c.right;if(ok)score++;
+        const skills=c.links?.flatMap(id=>({confounding:['bias'], 'selection-bias':['bias'], 'base-rate':['bayesian'], 'association-causation':['causality'], 'clinical-interview':['clinical'], 'differential-reasoning':['clinical']})[id]||[]);
+        window.ETO_LEARNING.assess('case:'+c.id,skills,ok);
         $$('.case-option',mount).forEach((x,i)=>{x.disabled=true;x.classList.toggle('correct',i===c.right);x.classList.toggle('wrong',i===chosen&&i!==c.right)});
         $('.case-feedback',mount).innerHTML=`<strong>${ok?tr('correct'):tr('incorrect')}</strong><p><b>${tr('why')}:</b> ${tx(c.explain)}</p><div class="concept-links"><b>${tr('related')}:</b> ${(c.links||[]).map(id=>{const x=K.concepts.find(c=>c.id===id);return x?`<a href="concepts.html#${id}">${tx(x.title)}</a>`:''}).join('')}</div>`;
         $('.case-footer span',mount).textContent=`${score}/${idx+1}`;$('#caseNext').hidden=false;
@@ -138,10 +121,14 @@
     const q=$('#bookSearch');let active='all';
     const draw=dom=>{
       active=dom;const needle=(q?.value||'').trim().toLocaleLowerCase(lang);
-      mount.innerHTML=K.books.filter(b=>(dom==='all'||b.domains.includes(dom))&&(!needle||`${b.title} ${b.author}`.toLocaleLowerCase(lang).includes(needle))).map(b=>`<article class="book-card" id="${b.id}"><div class="book-status ${b.status}">${tr(b.status==='ordered'?'statusOrdered':'statusOwned')}</div><h2>${b.title}</h2><p class="book-author">${b.author||tr('authorUnknown')}</p><div class="book-format">${tx(b.formatLabel)}</div><p class="book-reading-lens">${tx(b.readingLens)}</p><div class="book-domains">${b.domains.map(id=>{const d=domain(id);return `<a href="concepts.html?domain=${id}" class="domain-pill">${d?.icon||''} ${tx(d?.label)}</a>`}).join('')}</div><div class="book-route-links">${(window.ETO_WORKSHOP?.modules||[]).filter(m=>m.books.includes(b.id)).map(m=>`<a href="workshop.html?topic=${m.id}">${tx(m.title)} →</a>`).join('')}</div></article>`).join('')||`<div class="empty-state">${tr('noBooks')}</div>`;
+      mount.innerHTML=K.books.filter(b=>(dom==='all'||b.domains.includes(dom))&&(!needle||`${b.title} ${b.author}`.toLocaleLowerCase(lang).includes(needle))).map(b=>`<article class="book-card" id="${b.id}"><div class="book-status ${b.status}">${tr(b.status==='ordered'?'statusOrdered':'statusOwned')}</div><h2><a href="#${b.id}">${b.title}</a></h2><p class="book-author">${b.author||tr('authorUnknown')}</p><div class="book-format">${tx(b.formatLabel)}</div><p class="book-reading-lens">${tx(b.readingLens)}</p><div data-book-bookmark></div>${window.ETO_MATERIALS.render("book",b,lang)}<div class="book-domains">${b.domains.map(id=>{const d=domain(id);return `<a href="concepts.html?domain=${id}" class="domain-pill">${d?.icon||''} ${tx(d?.label)}</a>`}).join('')}</div><div class="book-route-links">${(window.ETO_WORKSHOP?.modules||[]).filter(m=>m.books.includes(b.id)).map(m=>`<a href="workshop.html?topic=${m.id}">${tx(m.title)} →</a>`).join('')}</div></article>`).join('')||`<div class="empty-state">${tr('noBooks')}</div>`;
+      for (const card of mount.querySelectorAll('[data-book-bookmark]')) {
+        const id=card.closest('article').id;
+        window.ETO_EXPERIENCE.materialControls(card,'books.html#'+id,K.books.find(b=>b.id===id).title,false);
+      }
     };
     const filters=$('#bookFilters');if(filters){filters.innerHTML=domainChips(active);bindFilter(draw)}
-    if(q)q.oninput=()=>draw(active);draw(active);let bookId='';try{bookId=decodeURIComponent(location.hash.slice(1))}catch{}if(/^book-\d+$/.test(bookId))document.getElementById(bookId)?.scrollIntoView({block:'center'});
+    if(q)q.oninput=()=>draw(active);draw(active);let bookId='';try{bookId=decodeURIComponent(location.hash.slice(1))}catch{}if(/^book-\d+$/.test(bookId)){const card=document.getElementById(bookId);card?.scrollIntoView({block:'center'});const book=K.books.find(b=>b.id===bookId);if(book)window.ETO_EXPERIENCE.materialControls(card?.querySelector('[data-book-bookmark]'),'books.html#'+bookId,book.title)}
   }
 
   function renderConnections(){
@@ -150,14 +137,14 @@
   }
   function renderPage(){
     const p=document.body.dataset.page;
-    if(p==='academy')renderAcademy();
-    else if(p==='concepts')renderConcepts();
+    if(p==='concepts')renderConcepts();
     else if(p==='cases')renderCases();
     else if(p==='atlas')renderAtlas();
     else if(p==='books')renderBooks();
     else if(p==='connections')renderConnections();
   }
 
+  window.addEventListener('hashchange',renderPage);
   bindShell();
   applyI18n();
 })();

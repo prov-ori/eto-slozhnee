@@ -1,0 +1,12 @@
+{
+  "name": "eto-slozhnee",
+  "private": true,
+  "scripts": {
+    "generate": "node generate.mjs",
+    "test": "node generate.mjs --check && node qa.mjs && node translation-qa.mjs && node --test regression.test.mjs",
+    "test:browser": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0"
+  }
+}

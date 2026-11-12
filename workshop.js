@@ -30,14 +30,13 @@
     nextCase:t('Дальше','Continue','Edasi'),restart:t('Начать заново','Start again','Alusta uuesti'),result:t('Результат раунда','Round result','Vooru tulemus'),completed:t('Все ситуации разобраны. Посмотри объяснения или начни заново.','All scenarios reviewed. Check the explanations or start again.','Kõik olukorrad on läbi vaadatud. Vaata selgitusi või alusta uuesti.'),reset:t('Сбросить фильтры','Reset filters','Lähtesta filtrid')
   };
   let lang=window.ETO_LEARNING.getLang();
-  const tx=o=>o?.[lang]||o?.ru||'',tr=k=>tx(words[k]);
+  const tx=window.ETO_I18N.pick,tr=k=>tx(words[k]);
   const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const KEY='eto-workshop-v1';
-  let state={answers:{},notes:{}};
-  try{const parsed=JSON.parse(localStorage.getItem(KEY));if(parsed&&typeof parsed==='object'&&!Array.isArray(parsed)){for(const key of ['answers','notes'])if(parsed[key]&&typeof parsed[key]==='object'&&!Array.isArray(parsed[key]))state[key]=parsed[key]}}catch{}
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));return true}catch{return false}}
+  const L=window.ETO_LEARNING;
+  const state=L.read().workshop;
+  function save(){const p=L.read();p.workshop=state;return L.write(p)}
   let domain='all',search='',active=new URLSearchParams(location.search).get('topic')||'';
-  const runs={consequences:{index:0,answers:[]},interview:{index:0,answers:[]}};
+  const runs={bayesian:{index:0,answers:[]},consequences:{index:0,answers:[]},interview:{index:0,answers:[]}};
   const sliderState={prevalence:1,sensitivity:90,specificity:95,concentration:5,kd:5,efficacy:1};
   const answered=m=>{const a=state.answers[m.id];return a&&Number.isInteger(a.selected)&&a.selected>=0&&a.selected<m.options.length?a:null};
   const link=(url,label)=>`<a href="${escape(url)}" target="_blank" rel="noopener noreferrer">${escape(label)} ↗</a>`;
@@ -50,7 +49,8 @@
   function route(m){
     const a=answered(m),index=W.modules.indexOf(m),next=W.modules[(index+1)%W.modules.length];
     $('#routeDetail').hidden=false;
-    $('#routeDetail').innerHTML=`<a class="text-button" href="workshop.html" data-topic="">← ${tr('back')}</a><article class="route-reading"><div class="eyebrow">${m.icon} · ${m.minutes} ${tr('min')}</div><h2 tabindex="-1" id="routeTitle">${tx(m.title)}</h2><p class="route-lead">${tx(m.lead)}</p><div class="reading-sections">${['idea','example','limit'].map((key,i)=>`<section><span class="reading-number">0${i+1}</span><h3>${tr(key)}</h3><p>${tx(m[key])}</p></section>`).join('')}</div><section class="route-task"><div class="eyebrow">${tr('task')}</div><h3>${tx(m.task)}</h3><label class="confidence-label" for="confidence">${tr('confidence')}</label><select id="confidence" ${a?'disabled':''}>${['low','mid','high'].map(k=>`<option value="${k}" ${a?.confidence===k?'selected':''}>${tr(k)}</option>`).join('')}</select><div class="case-options">${m.options.map((o,i)=>`<button type="button" class="case-option${a&&i===m.right?' correct':''}${a&&a.selected===i&&i!==m.right?' wrong':''}" data-answer="${i}" ${a?'disabled':''}>${tx(o)}</button>`).join('')}</div><div class="route-feedback" role="status">${a?`<strong>${tr(a.selected===m.right?'correct':'wrong')}</strong><p>${tx(m.why)}</p>${a.confidence==='high'&&a.selected!==m.right?`<p>${tr('calibration')}</p>`:''}<button type="button" class="text-button" id="retryRoute">${tr('retry')}</button>`:''}</div></section><section class="reading-note"><label for="readingNote">${tr('note')}</label><textarea id="readingNote" rows="4" maxlength="4000"></textarea><small id="noteStatus" role="status"></small></section><details class="route-references" open><summary>${tr('references')}</summary><ul>${m.sources.map(s=>`<li>${link(s.url,s.title)}</li>`).join('')}</ul></details><details class="route-references"><summary>${tr('books')} · ${m.books.length}</summary><ul>${m.books.map(id=>{const b=K.books.find(b=>b.id===id);return b?`<li><a href="books.html#${b.id}">${escape(b.title)}</a> — ${escape(b.author)||'—'}</li>`:''}).join('')}</ul></details><div class="concept-links" aria-label="${tr('concepts')}">${m.concepts.map(id=>{const c=K.concepts.find(c=>c.id===id);return c?`<a href="concepts.html#${id}">${tx(c.title)}</a>`:''}).join('')}</div><a class="btn primary next-route" href="workshop.html?topic=${next.id}" data-topic="${next.id}">${tr('next')} →</a></article>`;
+    $('#routeDetail').innerHTML=`<a class="text-button" href="workshop.html" data-topic="">← ${tr('back')}</a><article class="route-reading"><div class="eyebrow">${m.icon} · ${m.minutes} ${tr('min')}</div><h2 tabindex="-1" id="routeTitle">${tx(m.title)}</h2><div data-workshop-bookmark></div><p class="route-lead">${tx(m.lead)}</p>${window.ETO_MATERIALS.render("workshop",m,lang)}<div class="reading-sections">${['idea','example','limit'].map((key,i)=>`<section><span class="reading-number">0${i+1}</span><h3>${tr(key)}</h3><p>${tx(m[key])}</p></section>`).join('')}</div><section class="route-task"><div class="eyebrow">${tr('task')}</div><h3>${tx(m.task)}</h3><label class="confidence-label" for="confidence">${tr('confidence')}</label><select id="confidence" ${a?'disabled':''}>${['low','mid','high'].map(k=>`<option value="${k}" ${a?.confidence===k?'selected':''}>${tr(k)}</option>`).join('')}</select><div class="case-options">${m.options.map((o,i)=>`<button type="button" class="case-option${a&&i===m.right?' correct':''}${a&&a.selected===i&&i!==m.right?' wrong':''}" data-answer="${i}" ${a?'disabled':''}>${tx(o)}</button>`).join('')}</div><div class="route-feedback" role="status">${a?`<strong>${tr(a.selected===m.right?'correct':'wrong')}</strong><p>${tx(m.why)}</p>${a.confidence==='high'&&a.selected!==m.right?`<p>${tr('calibration')}</p>`:''}<button type="button" class="text-button" id="retryRoute">${tr('retry')}</button>`:''}</div></section><section class="reading-note"><label for="readingNote">${tr('note')}</label><textarea id="readingNote" rows="4" maxlength="4000"></textarea><small id="noteStatus" role="status"></small></section><details class="route-references" open><summary>${tr('references')}</summary><ul>${m.sources.map(s=>`<li>${link(s.url,s.title)}</li>`).join('')}</ul></details><details class="route-references"><summary>${tr('books')} · ${m.books.length}</summary><ul>${m.books.map(id=>{const b=K.books.find(b=>b.id===id);return b?`<li><a href="books.html#${b.id}">${escape(b.title)}</a> — ${escape(b.author)||'—'}</li>`:''}).join('')}</ul></details><div class="concept-links" aria-label="${tr('concepts')}">${m.concepts.map(id=>{const c=K.concepts.find(c=>c.id===id);return c?`<a href="concepts.html#${id}">${tx(c.title)}</a>`:''}).join('')}</div><a class="btn primary next-route" href="workshop.html?topic=${next.id}" data-topic="${next.id}">${tr('next')} →</a></article>`;
+    window.ETO_EXPERIENCE.materialControls($('[data-workshop-bookmark]'),'workshop.html?topic='+m.id,m.title);
     $('#readingNote').value=typeof state.notes[m.id]==='string'?state.notes[m.id]:'';
     $('#readingNote').addEventListener('input',e=>{state.notes[m.id]=e.target.value;$('#noteStatus').textContent=tr(save()?'saved':'saveError')});
     $$('[data-answer]').forEach(b=>b.addEventListener('click',()=>{if(answered(m))return;state.answers[m.id]={selected:Number(b.dataset.answer),confidence:$('#confidence').value};const ok=save();route(m);progress();if(!ok)$('#noteStatus').textContent=tr('saveError')}));
@@ -64,6 +64,7 @@
   function slider(id,label,min,max,step,suffix=''){return `<label for="${id}">${label} <output id="${id}Value" for="${id}"></output></label><input id="${id}" data-model="${id}" type="range" min="${min}" max="${max}" step="${step}" value="${sliderState[id]}" aria-describedby="${id}Value">`}
   function renderModels(){
     $('#bayesLab').innerHTML=`<div class="eyebrow">01 · ${tr('workshop')}</div><h2>${tr('bayes')}</h2><p>${tr('bayesText')}</p><div class="model-controls">${slider('prevalence',tr('prevalence'),0,100,1)}${slider('sensitivity',tr('sensitivity'),0,100,1)}${slider('specificity',tr('specificity'),0,100,1)}</div><div id="frequencyOutput" aria-live="polite"></div><p class="knowledge-note">${tr('bayesWhy')}</p>${link('https://pubmed.ncbi.nlm.nih.gov/26528197/','Hoffrage et al. · 2015')}`;
+    $('#bayesLab').insertAdjacentHTML('beforeend','<div id="bayesianLab" class="experience-panel"></div>');
     $('#receptorLab').innerHTML=`<div class="eyebrow">02 · ${tr('workshop')}</div><h2>${tr('receptor')}</h2><p>${tr('receptorText')}</p><div class="model-controls">${slider('concentration',tr('concentration'),0,50,1)}${slider('kd',tr('kd'),1,20,1)}${slider('efficacy',tr('efficacy'),0,1,.1)}</div><div id="receptorOutput" aria-live="polite"></div><p class="knowledge-note">${tr('receptorWhy')}</p><a href="workshop.html?topic=receptors" data-topic="receptors">${tr('open')} →</a>`;
     $$('[data-model]').forEach(el=>el.addEventListener('input',()=>{sliderState[el.id]=Number(el.value);updateModels()}));updateModels();
   }
@@ -74,11 +75,31 @@
     const r=M.receptor(sliderState.concentration,sliderState.kd,sliderState.efficacy);
     $('#receptorOutput').innerHTML=['occupancy','response'].map(key=>`<div class="receptor-meter"><div><span>${tr(key)}</span><strong>${fmt(r[key]*100)}%</strong></div><div class="frequency-bar" aria-hidden="true"><span style="width:${r[key]*100}%"></span></div></div>`).join('');
   }
+  function renderBayesian(mount, run, items, item, selected, done) {
+    mount.innerHTML=`<h3 tabindex="-1">${tx(window.ETO_EXPERIENCE_DATA.skills.bayesian.name)} · ${run.index+1}/${items.length}</h3>
+      <p>${tx(item.q)}</p><div class="case-options">${item.options.map((option,index)=>`<button class="case-option${selected!==undefined&&index===item.right?' correct':''}" type="button" data-option="${index}" ${selected!==undefined?'disabled':''}>${tx(option)}</button>`).join('')}</div>
+      <div role="status">${selected===undefined?'':`<p><strong>${tr(selected===item.right?'correct':'wrong')}</strong> · ${tx(item.why)}</p><button type="button" class="btn primary" data-next>${tr(done?'restart':'nextCase')}</button>`}</div>`;
+    mount.querySelectorAll('[data-option]').forEach(button=>button.onclick=()=>{
+      if(run.answers[run.index]!==undefined)return;
+      const chosen=Number(button.dataset.option);
+      run.answers[run.index]=chosen;
+      L.assess('bayesian:'+item.id,['bayesian'],chosen===item.right);
+      renderActivity('bayesian');
+      mount.querySelector('[data-next]').focus();
+    });
+    const next=mount.querySelector('[data-next]');
+    if(next)next.onclick=()=>{
+      if(done){run.index=0;run.answers=[]}else run.index++;
+      renderActivity('bayesian');
+      mount.querySelector('h3').focus();
+    };
+  }
   function renderActivity(name){
-    const run=runs[name],items=A[name],mount=$('#'+name+'Lab'),item=items[run.index],selected=run.answers[run.index],done=run.answers.length===items.length;
+    const run=runs[name],items=name==='bayesian'?window.ETO_BAYES_EXERCISES:A[name],mount=$('#'+name+'Lab'),item=items[run.index],selected=run.answers[run.index],done=run.answers.length===items.length;
     const score=run.answers.filter((value,i)=>value===items[i].right).length;
+    if(name==='bayesian'){renderBayesian(mount,run,items,item,selected,done);return}
     mount.innerHTML=`<div class="eyebrow">${name==='consequences'?'03':'04'} · ${tr('workshop')}</div><h2>${tr(name)}</h2><p>${tr(name+'Text')}</p><div class="activity-position">${run.index+1}/${items.length} · ${score}/${run.answers.length}</div><h3>${tx(item.q)}</h3><div class="case-options">${item.options.map((o,i)=>`<button type="button" class="case-option${selected!==undefined&&i===item.right?' correct':''}${selected===i&&i!==item.right?' wrong':''}" data-option="${i}" ${selected!==undefined?'disabled':''}>${tx(o)}</button>`).join('')}</div><div class="case-feedback" role="status">${selected===undefined?'':`<strong>${tr(selected===item.right?'correct':'wrong')}</strong><p>${tx(item.why)}</p>`}</div>${selected!==undefined?`<button type="button" class="btn primary" data-next>${tr(done?'restart':'nextCase')}</button>`:''}${done?`<p role="status">${tr('result')}: ${score}/${items.length}. ${tr('completed')}</p>`:''}<p><a href="workshop.html?topic=${name==='interview'?'interview':'consequences'}" data-topic="${name==='interview'?'interview':'consequences'}">${tr('open')} →</a></p>`;
-    mount.querySelectorAll('[data-option]').forEach(b=>b.addEventListener('click',()=>{if(run.answers[run.index]!==undefined)return;run.answers[run.index]=Number(b.dataset.option);renderActivity(name)}));
+    mount.querySelectorAll('[data-option]').forEach(b=>b.addEventListener('click',()=>{if(run.answers[run.index]!==undefined)return;run.answers[run.index]=Number(b.dataset.option);if(name==='interview')L.assess('interview:'+item.id,['clinical'],run.answers[run.index]===item.right);renderActivity(name)}));
     mount.querySelector('[data-next]')?.addEventListener('click',()=>{if(done){run.index=0;run.answers=[]}else run.index++;renderActivity(name);mount.querySelector('h3').setAttribute('tabindex','-1');mount.querySelector('h3').focus()});
   }
   function render(){
@@ -87,12 +108,13 @@
     $('#routeSearch').placeholder=tr('search');$('#routeSearch').setAttribute('aria-label',tr('search'));
     $('#routeFilters').innerHTML=`<button type="button" class="knowledge-chip${domain==='all'?' active':''}" data-route-domain="all" aria-pressed="${domain==='all'}">${tr('all')}</button>`+K.domains.filter(d=>W.modules.some(m=>m.domain===d.id)).map(d=>`<button type="button" class="knowledge-chip${domain===d.id?' active':''}" data-route-domain="${d.id}" aria-pressed="${domain===d.id}">${tx(d.label)}</button>`).join('');
     $$('[data-route-domain]').forEach(b=>b.addEventListener('click',()=>{domain=b.dataset.routeDomain;render()}));
-    selectRoute(active,false);progress();renderModels();renderActivity('consequences');renderActivity('interview');
+    selectRoute(active,false);progress();renderModels();renderActivity('bayesian');renderActivity('consequences');renderActivity('interview');
   }
   $('#routeSearch').addEventListener('input',e=>{search=e.target.value;renderCards()});
   $('#resetFilters').addEventListener('click',()=>{domain='all';search='';$('#routeSearch').value='';render()});
   document.addEventListener('click',e=>{const a=e.target.closest('a[data-topic]');if(!a||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey||e.button!==0)return;e.preventDefault();selectRoute(a.dataset.topic)});
   window.addEventListener('popstate',()=>selectRoute(new URLSearchParams(location.search).get('topic')||'',false));
-  $('#languageSelect').addEventListener('change',e=>{lang=e.target.value;render()});
+  window.addEventListener('eto:language',()=>{lang=window.ETO_I18N.get();render()});
   render();
+  if(active)$('#routeTitle')?.scrollIntoView({block:'start'});
 })();

@@ -2,17 +2,6 @@
   const D = window.ETO_DATA;
   if (!D?.ui) return;
 
-  if (!document.querySelector('link[data-mobile-patch]')) {
-    const alreadyLoaded = [...document.querySelectorAll('link[rel="stylesheet"]')].some(link => /(?:^|\/)patch\.css(?:$|[?#])/.test(link.getAttribute('href') || ''));
-    if (!alreadyLoaded) {
-      const link=document.createElement('link');
-      link.rel='stylesheet';
-      link.href='patch.css';
-      link.dataset.mobilePatch='1';
-      document.head.appendChild(link);
-    }
-  }
-
   const extra = {
     ru: {
       skip:'Перейти к содержанию', primaryNav:'Основная навигация', mobileNav:'Мобильное меню', bottomNav:'Нижняя навигация',
@@ -55,10 +44,4 @@
     }
   };
   for (const lang of ['ru','en','et']) Object.assign(D.ui[lang], extra[lang]);
-  if (!document.querySelector('script[data-site-nav]')) {
-    const s=document.createElement('script');s.src='site-nav.js';s.defer=true;s.dataset.siteNav='1';document.head.appendChild(s);
-  }
-  if (!document.querySelector('script[data-static-share]')) {
-    const s=document.createElement('script');s.src='share-patch.js';s.defer=true;s.dataset.staticShare='1';document.head.appendChild(s);
-  }
 })();

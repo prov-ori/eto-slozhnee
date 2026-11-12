@@ -1,13 +1,53 @@
 (() => {
   'use strict';
-  const labels={ru:{workshop:'Практикум',home:'Главная',academy:'Академия',courses:'Курсы',explore:'Исследовать',games:'Играть',progress:'Прогресс',daily:'Сегодня',map:'Карта знаний',simulator:'Симулятор',library:'Библиотека',glossary:'Словарь',method:'Метод',concepts:'Концепты',cases:'Кейсы',labs:'Лаборатории',atlas:'Атлас',books:'Книги',connections:'Связи'},en:{workshop:'Workshop',home:'Home',academy:'Academy',courses:'Courses',explore:'Explore',games:'Play',progress:'Progress',daily:'Today',map:'Knowledge map',simulator:'Simulator',library:'Library',glossary:'Glossary',method:'Method',concepts:'Concepts',cases:'Cases',labs:'Labs',atlas:'Atlas',books:'Books',connections:'Connections'},et:{workshop:'Praktikum',home:'Avaleht',academy:'Akadeemia',courses:'Kursused',explore:'Uuri',games:'Mängi',progress:'Edenemine',daily:'Täna',map:'Teadmiste kaart',simulator:'Simulaator',library:'Teek',glossary:'Sõnastik',method:'Meetod',concepts:'Mõisted',cases:'Juhtumid',labs:'Laborid',atlas:'Atlas',books:'Raamatud',connections:'Seosed'}};
-  const getLang=()=>{try{const s=localStorage.getItem('eto-lang');if(['ru','en','et'].includes(s))return s}catch{}const b=(navigator.language||'ru').slice(0,2).toLowerCase();return['ru','en','et'].includes(b)?b:'ru'};
-  const page=()=>document.body.dataset.page||'home';const prefix=location.pathname.includes('/facts/')?'../':'';const href=f=>`${prefix}${f}`;const academyPages=['workshop','academy','learn','concepts','cases','labs','atlas','books','connections'];
-  const activeKey=()=>{const p=page();if(academyPages.includes(p))return'academy';if(['games','simulator','daily'].includes(p))return'games';if(p==='progress')return'progress';if(['library','glossary','method','fact','map'].includes(p))return'explore';return'home'};
-  const item=(file,key,text,active)=>`<a href="${href(file)}"${active===key?' class="active" aria-current="page"':''}>${text}</a>`;const bottomItem=(file,key,icon,text,active)=>`<a href="${href(file)}"${active===key?' class="active" aria-current="page"':''}><span aria-hidden="true">${icon}</span><b>${text}</b></a>`;
-  function closeMobileMenu(){const menu=document.querySelector('#mobileMenu'),toggle=document.querySelector('#menuToggle');if(!menu)return;menu.hidden=true;toggle?.setAttribute('aria-expanded','false')}
-  function render(){const language=getLang(),l=labels[language]||labels.ru,active=activeKey();const desktop=document.querySelector('.desktop-nav');if(desktop){desktop.innerHTML=[item('index.html','home',l.home,active),item('academy.html','academy',l.academy,active),item('library.html','explore',l.explore,active),item('games.html','games',l.games,active),item('progress.html','progress',l.progress,active)].join('');desktop.setAttribute('aria-label',language==='ru'?'Основная навигация':language==='et'?'Põhinavigatsioon':'Primary navigation')}
-    const mobile=document.querySelector('#mobileMenu');if(mobile){mobile.innerHTML=[item('index.html','home',l.home,active),item('academy.html','academy',l.academy,active),item('workshop.html','academy',l.workshop,active),item('learn.html','academy',l.courses,active),item('concepts.html','academy',l.concepts,active),item('cases.html','academy',l.cases,active),item('labs.html','academy',l.labs,active),item('atlas.html','academy',l.atlas,active),item('books.html','academy',l.books,active),item('connections.html','academy',l.connections,active),item('daily.html','games',l.daily,active),item('map.html','explore',l.map,active),item('simulator.html','games',l.simulator,active),item('library.html','explore',l.library,active),item('games.html','games',l.games,active),item('glossary.html','explore',l.glossary,active),item('method.html','explore',l.method,active),item('progress.html','progress',l.progress,active)].join('');mobile.setAttribute('aria-label',language==='ru'?'Мобильное меню':language==='et'?'Mobiilimenüü':'Mobile menu')}
-    const bottom=document.querySelector('.bottom-nav');if(bottom)bottom.innerHTML=[bottomItem('index.html','home','⌂',l.home,active),bottomItem('academy.html','academy','◎',l.academy,active),bottomItem('games.html','games','✦',l.games,active),bottomItem('progress.html','progress','✓',l.progress,active)].join('');document.querySelectorAll('.academy-subnav').forEach(nav=>{if(!nav.querySelector('[data-workshop-link]')){const a=document.createElement('a');a.href=href('workshop.html');a.dataset.workshopLink='';nav.append(a)}nav.querySelector('[data-workshop-link]').textContent=l.workshop});const select=document.querySelector('#languageSelect');if(select)select.value=language}
-  render();document.querySelector('#languageSelect')?.addEventListener('change',()=>setTimeout(render,0));window.addEventListener('eto:language',render);document.querySelector('#mobileMenu')?.addEventListener('click',e=>{if(e.target.closest('a'))closeMobileMenu()});
+  const I = window.ETO_I18N;
+  const E = window.ETO_EXPERIENCE_DATA;
+  const prefix = document.body.dataset.factId ? '../' : '';
+  const page = document.body.dataset.page;
+  const sections = {
+    home: ['index.html', ['home', 'daily']],
+    learn: ['learn.html', ['learn', 'academy', 'workshop']],
+    explore: ['explore.html', ['explore', 'library', 'concepts', 'glossary', 'atlas', 'books', 'connections', 'map', 'fact']],
+    practice: ['practice.html', ['practice', 'games', 'labs', 'cases', 'simulator']],
+    progress: ['progress.html', ['progress']]
+  };
+  const explore = { library: 'library.html', concepts: 'concepts.html', glossary: 'glossary.html', atlas: 'atlas.html', connections: 'connections.html', books: 'books.html', map: 'map.html' };
+  const practice = { games: 'games.html', labs: 'labs.html', cases: 'cases.html', simulator: 'simulator.html' };
+  const learn = { learn: 'learn.html', workshop: 'workshop.html' };
+  const icons = {home:'⌂', learn:'▶', explore:'◎', practice:'✦', progress:'✓'};
+  const t = key => I.pick(E.labels[key]);
+  const link = (key, href, active, icon) => `<a href="${prefix}${href}"${active ? ' class="active" aria-current="page"' : ''}>${icon ? `<span aria-hidden="true">${icon}</span><b>${t(key)}</b>` : t(key)}</a>`;
+  const mobile = document.querySelector('#mobileMenu');
+  const menuButton = document.querySelector('#menuToggle');
+
+  function render() {
+    for (const selector of ['.desktop-nav', '#mobileMenu', '.bottom-nav']) {
+      const nav = document.querySelector(selector);
+      if (!nav) continue;
+      nav.innerHTML = Object.entries(sections).map(([key, [href, pages]]) =>
+        link(key, href, pages.includes(page), selector === '.bottom-nav' ? icons[key] : '')).join('');
+      nav.setAttribute('aria-label', I.pick({ru:'Основная навигация', en:'Primary navigation', et:'Põhinavigatsioon'}));
+    }
+    const sub = document.querySelector('[data-section-nav]');
+    if (sub) {
+      const entries = {explore, practice, learn}[sub.dataset.sectionNav];
+      sub.innerHTML = Object.entries(entries).map(([key, href]) => link(key, href, page === key)).join('');
+      sub.setAttribute('aria-label', t(sub.dataset.sectionNav));
+    }
+    const footer = document.querySelector('[data-method-link]');
+    if (footer) footer.textContent = t('method');
+    document.querySelectorAll('[data-experience]').forEach(el => {
+      el.textContent = t(el.dataset.experience);
+    });
+    if (['practice', 'explore'].includes(page)) document.title = `${t(page)} — Это сложнее`;
+  }
+
+  I.bind();
+  render();
+  window.addEventListener('eto:language', render);
+  mobile?.addEventListener('click', event => {
+    if (!event.target.closest('a')) return;
+    mobile.hidden = true;
+    menuButton?.setAttribute('aria-expanded', 'false');
+  });
 })();
